@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	<TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
+	<Authors>Philipp Wagner</Authors>
+	<Company />
+	<Product />
+	<Description>A library for the Firebase Cloud Messaging (FCM) API.</Description>
+	<PackageTags>fcm, firebase</PackageTags>
+	<RepositoryUrl>https://github.com/bytefish/FcmSharp</RepositoryUrl>
+	<PackageProjectUrl>https://github.com/bytefish/FcmSharp</PackageProjectUrl>
+	<PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+	<Copyright>Copyright © 2017 Philipp Wagner</Copyright>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|x64'" />
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+		<Reference Include="System" />
+		<Reference Include="System.Net.Http" />
+		<Reference Include="Microsoft.CSharp" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+		
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+		<Reference Include="System.Net.Http" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Async\**" />
+	  <EmbeddedResource Remove="Async\**" />
+	  <None Remove="Async\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+	  <PackageReference Include="System.Net.Http" Version="4.3.2" />
+	</ItemGroup>
+
+</Project>

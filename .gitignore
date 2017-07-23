@@ -1,0 +1,8 @@
+.vs/
+.idea/
+*.xproj.user
+*.csproj.user
+project.lock.json
+bin/
+obj/
+packages/

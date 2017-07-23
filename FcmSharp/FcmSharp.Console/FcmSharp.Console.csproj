@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <AssemblyName>FcmSharp.Console</AssemblyName>
+    <RootNamespace>FcmSharp.Console</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FcmSharp\FcmSharp.csproj" />
+  </ItemGroup>
+
+</Project>
