@@ -12,7 +12,7 @@ It implements the entire [Firebase Cloud Messaging HTTP Protocol] and supports:
 * Topic Messages
 * Device Group Messages
 
-Firebase Cloud Messaging (FCM) is basically the successor to Google Cloud Messaging. 
+[FcmSharp] supports .NET Core as of Version 1.0.0.
 
 ## Installing FcmSharp ##
 
