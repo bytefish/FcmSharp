@@ -5,7 +5,6 @@ using System;
 using System.Threading;
 using FcmSharp.Model.Options;
 using FcmSharp.Model.Topics;
-using FcmSharp.Requests.Notification;
 using FcmSharp.Requests.Topics;
 using FcmSharp.Settings;
 
@@ -15,18 +14,12 @@ namespace FcmSharp.Console
     {
         public static void Main(string[] args)
         {
-            // Read the Settings from a File, which is not under Version Control:
+            // Read the API Key from a File, which is not under Version Control:
             var settings = new FileBasedFcmClientSettings("/Users/bytefish/api.key");
 
             // Construct the Client:
             using (var client = new FcmClient(settings))
             {
-                // Construct the Notification to display:
-                var notification = new NotificationPayload()
-                {
-                    Title = "ABC"
-                };
-
                 // Construct the Data Payload to send:
                 var data = new
                 {

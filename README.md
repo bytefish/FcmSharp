@@ -12,7 +12,7 @@ It implements the entire [Firebase Cloud Messaging HTTP Protocol] and supports:
 * Topic Messages
 * Device Group Messages
 
-[FcmSharp] supports .NET Core as of Version 1.0.0.
+Firebase Cloud Messaging (FCM) is basically the successor to Google Cloud Messaging. 
 
 ## Installing FcmSharp ##
 
@@ -25,7 +25,7 @@ PM> Install-Package FcmSharp
 
 ## Quickstart ##
 
-The Quickstart shows you how to work with [FcmSharp].
+The Quickstart shows you how to work with [FcmSharp] in C#.
 
 ```csharp
 // Copyright (c) Philipp Wagner. All rights reserved.
@@ -35,7 +35,6 @@ using System;
 using System.Threading;
 using FcmSharp.Model.Options;
 using FcmSharp.Model.Topics;
-using FcmSharp.Requests.Notification;
 using FcmSharp.Requests.Topics;
 using FcmSharp.Settings;
 
@@ -45,18 +44,12 @@ namespace FcmSharp.Console
     {
         public static void Main(string[] args)
         {
-            // Read the Settings from a File, which is not under Version Control:
+            // Read the API Key from a File, which is not under Version Control:
             var settings = new FileBasedFcmClientSettings("/Users/bytefish/api.key");
 
             // Construct the Client:
             using (var client = new FcmClient(settings))
             {
-                // Construct the Notification to display:
-                var notification = new NotificationPayload()
-                {
-                    Title = "ABC"
-                };
-
                 // Construct the Data Payload to send:
                 var data = new
                 {
@@ -90,10 +83,89 @@ namespace FcmSharp.Console
 }
 ```
 
-## Synchronous API Calls ##
+### How to Configure a Proxy ###
 
-The ``FcmClient`` only provides an Asynchronous API. This is intentional and a Synchronous API won't be added. But I know that 
-async programming can be tough for beginners. So here is how you can turn an async call into a synchronous one:
+[FcmSharp] uses the ``HttpClient`` for making requests to the Firebase Cloud Messaging server. So in order to configure 
+a proxy for the HTTP requests, you can configure the ``HttpClient`` used in [FcmSharp]. This is done by instantiating 
+the ``FcmHttpClient`` with a configured ``HttpClient``.
+
+The following test shows how to build the ``FcmClient`` with a custom ``FcmHttpClient``.
+
+```csharp
+/// <summary>
+/// The WebProxy.
+/// </summary>
+public class WebProxy : IWebProxy
+{
+    public Uri ProxyUri { get; set; }
+
+    public ICredentials Credentials { get; set; }
+
+    public Uri GetProxy(Uri destination)
+    {
+        return ProxyUri;
+    }
+
+    public bool IsBypassed(Uri host)
+    {
+        return false;
+    }
+}
+
+[Test, Explicit]
+public void TestHttpClientWithProxy()
+{
+    // Settings to be used:
+    IFcmClientSettings settings = new FileBasedFcmClientSettings("/Users/bytefish/api.key");
+
+    // The Proxy Address:
+    Uri proxyUri = new Uri(string.Format("{0}:{1}", "<proxy_address>", "<proxy_port>"));
+
+    // Credentials for the Proxy:
+    ICredentials proxyCredentials = new NetworkCredential(
+        "<proxy_username>",
+        "<proxy_password>"
+    );
+
+    // Define the Proxy:
+    IWebProxy proxy = new WebProxy
+    {
+        ProxyUri = proxyUri,
+        Credentials = proxyCredentials
+
+    };
+
+    // Now create a client handler with the Proxy settings:
+    HttpClientHandler httpClientHandler = new HttpClientHandler()
+    {
+        Proxy = proxy,
+        PreAuthenticate = true,
+        UseDefaultCredentials = false,
+    };
+
+    // Build the Custom FcmHttpClient:
+    FcmHttpClient fcmHttpClient = new FcmHttpClient(settings, new HttpClient(httpClientHandler), JsonSerializer.Default);
+
+    // Build the HttpClient:
+
+    using (var client = new FcmClient(settings, fcmHttpClient))
+    {
+        CancellationTokenSource cts = new CancellationTokenSource();
+
+        // Build the message:
+        var message = new TopicUnicastMessage<int>(new FcmMessageOptionsBuilder().Build(), new Topic("a"), 1);
+
+        // And send the message:
+        var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
+    }
+}
+```
+
+## How to do Synchronous API Calls ##
+
+The ``FcmClient`` only provides an asynchronous API, and a Synchronous API won't be added. I know that 
+asynchronous programming can be very challenging for beginners, so here is how you can turn an async 
+call into a synchronous one:
 
 ```csharp
 var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();

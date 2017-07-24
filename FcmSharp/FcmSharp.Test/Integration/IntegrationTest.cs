@@ -1,13 +1,16 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using FcmSharp.Constants;
 using FcmSharp.Exceptions;
+using FcmSharp.Http;
 using FcmSharp.Http.Constants;
 using FcmSharp.Http.Retry;
 using FcmSharp.Model.Options;
 using FcmSharp.Model.Topics;
 using FcmSharp.Requests.Topics;
 using FcmSharp.Responses;
+using FcmSharp.Serializer;
 using FcmSharp.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +20,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 
 namespace FcmSharp.Test.Integration
@@ -94,7 +98,7 @@ namespace FcmSharp.Test.Integration
         [Route("TopicMessage_Unauthorized")]
         public IActionResult TopicMessage_Unauthorized(object message)
         {
-            return StatusCode((int) HttpStatusCode.Unauthorized);
+            return StatusCode((int)HttpStatusCode.Unauthorized);
         }
 
         [HttpPost]
@@ -114,7 +118,7 @@ namespace FcmSharp.Test.Integration
             this.HttpContext.Response.Headers[HttpHeaderNames.RetryAfter] = "Fri, 31 Dec 1999 23:59:59 GMT";
 
             // Set as Internal Server Error:
-            this.HttpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+            this.HttpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
             return Json(response);
         }
@@ -167,12 +171,12 @@ namespace FcmSharp.Test.Integration
         {
             string value = this.HttpContext.Request.Headers[HttpHeaderNames.Authorization];
 
-            if(string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value))
             {
                 return BadRequest();
             }
 
-            if(!value.Equals("key=Abc", StringComparison.Ordinal))
+            if (!value.Equals("key=Abc", StringComparison.Ordinal))
             {
                 return BadRequest();
             }
@@ -342,7 +346,7 @@ namespace FcmSharp.Test.Integration
                 {
                     isRetryExceptionCaught = true;
                 }
-                catch(FcmGeneralException)
+                catch (FcmGeneralException)
                 {
                     isGeneralExceptionCaught = true;
                 }
@@ -402,7 +406,73 @@ namespace FcmSharp.Test.Integration
             }
         }
 
-        
+        /// <summary>
+        /// The WebProxy.
+        /// </summary>
+        public class WebProxy : IWebProxy
+        {
+            public Uri ProxyUri { get; set; }
 
+            public ICredentials Credentials { get; set; }
+
+            public Uri GetProxy(Uri destination)
+            {
+                return ProxyUri;
+            }
+
+            public bool IsBypassed(Uri host)
+            {
+                return false;
+            }
+        }
+
+        [Test, Explicit]
+        public void TestHttpClientWithProxy()
+        {
+            // Settings to be used:
+            IFcmClientSettings settings = new FileBasedFcmClientSettings("/Users/bytefish/api.key");
+
+            // The Proxy Address:
+            Uri proxyUri = new Uri(string.Format("{0}:{1}", "<proxy_address>", "<proxy_port>"));
+
+            // Credentials for the Proxy:
+            ICredentials proxyCredentials = new NetworkCredential(
+                "<proxy_username>",
+                "<proxy_password>"
+            );
+
+            // Define the Proxy:
+            IWebProxy proxy = new WebProxy
+            {
+                ProxyUri = proxyUri,
+                Credentials = proxyCredentials
+
+            };
+
+            // Now create a client handler with the Proxy settings:
+            HttpClientHandler httpClientHandler = new HttpClientHandler()
+            {
+                Proxy = proxy,
+                PreAuthenticate = true,
+                UseDefaultCredentials = false,
+            };
+
+            // Build the Custom FcmHttpClient:
+            FcmHttpClient fcmHttpClient = new FcmHttpClient(settings, new HttpClient(httpClientHandler), JsonSerializer.Default);
+
+            // Build the HttpClient:
+
+            using (var client = new FcmClient(settings, fcmHttpClient))
+            {
+                CancellationTokenSource cts = new CancellationTokenSource();
+
+                // Build the message:
+                var message = new TopicUnicastMessage<int>(new FcmMessageOptionsBuilder().Build(), new Topic("a"), 1);
+
+                // And send the message:
+                var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
+            }
+        }
     }
+
 }
