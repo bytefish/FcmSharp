@@ -35,6 +35,9 @@ namespace FcmSharp.Requests.Notification
 
         [JsonProperty("click_action")]
         public string ClickAction { get; set; }
+        
+        [JsonProperty("subtitle")]
+        public string Subtitle { get; set; }
 
         [JsonProperty("body_loc_key")]
         public string BodyLocKey { get; set; }
