@@ -14,6 +14,9 @@ namespace FcmSharp.Requests.Notification
 
         [JsonProperty("body")]
         public string Body { get; set; }
+        
+        [JsonProperty("android_channel_id")]
+        public string AndroidChannelId { get; set; };
 
         [JsonProperty("icon")]
         public string Icon { get; set; }
