@@ -16,9 +16,14 @@ namespace FcmSharp.Requests.Topics
 
         public TopicMulticastMessage(FcmMessageOptions options, TopicList topicList, NotificationPayload notification)
             : base(options, notification)
-
         {
             Condition = topicList.GetTopicsCondition();
+        }
+
+        public TopicMulticastMessage(FcmMessageOptions options, string condition, NotificationPayload notification)
+            : base(options, notification)
+        {
+            Condition = condition;
         }
     }
 
@@ -33,9 +38,19 @@ namespace FcmSharp.Requests.Topics
         {
         }
 
+        public TopicMulticastMessage(FcmMessageOptions options, string condition, TPayload data)
+            : this(options, condition, data, null)
+        {
+        }
+
         public TopicMulticastMessage(FcmMessageOptions options, TopicList topicList, TPayload data, NotificationPayload notification)
             : base(options, topicList, notification)
+        {
+            Data = data;
+        }
 
+        public TopicMulticastMessage(FcmMessageOptions options, string condition, TPayload data, NotificationPayload notification)
+            : base(options, condition, notification)
         {
             Data = data;
         }
