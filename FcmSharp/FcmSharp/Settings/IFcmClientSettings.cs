@@ -3,12 +3,14 @@
 
 namespace FcmSharp.Settings
 {
-    public interface IFcmClientSettings
+    public class FcmClientSettings
     {
-        string FcmUrl { get; }
+        public readonly string FcmUrl;
 
-        string ProjectId { get; }
-
-        string ApiKey { get; }
+        public FcmClientSettings(string projectId)
+        {
+            FcmUrl = $"https://fcm.googleapis.com/v1/projects/{projectId}/messages:send";
+        }
+        
     }
 }

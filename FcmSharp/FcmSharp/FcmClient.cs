@@ -5,9 +5,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FcmSharp.Http;
-using FcmSharp.Requests;
-using FcmSharp.Requests.DeviceGroup;
-using FcmSharp.Requests.Topics;
 using FcmSharp.Responses;
 using FcmSharp.Settings;
 
