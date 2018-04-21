@@ -15,11 +15,12 @@ namespace FcmSharp.Requests
         public string CollapseKey { get; set; }
 
         [JsonProperty("priority")]
-        [JsonConverter(typeof(PriorityEnumConverter))]
+        [JsonConverter(typeof(AndroidMessagePriorityEnumConverter))]
         public AndroidMessagePriorityEnum Priority { get; set; }
 
         [JsonProperty("ttl")]
-        public TimeSpan TTL { get; set; }
+        [JsonConverter(typeof(DurationFormatConverter))]
+        public TimeSpan? TimeToLive { get; set; }
 
         [JsonProperty("restricted_package_name")]
         public string RestrictedPackageName { get; set; }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace FcmSharp.Requests.Topics
+namespace FcmSharp.Requests
 {
     public class AndroidNotification
     {
@@ -41,7 +36,5 @@ namespace FcmSharp.Requests.Topics
 
         [JsonProperty("title_loc_args")]
         public string[] TitleLocArgs { get; set; }
-
-
     }
 }
