@@ -2,9 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using FcmSharp.Http;
+using FcmSharp.Http.Builder;
 using FcmSharp.Requests;
 using FcmSharp.Responses;
 using FcmSharp.Settings;
@@ -46,8 +48,8 @@ namespace FcmSharp
 
         public Task<FcmMessageResponse> SendTopicManagementRequestAsync(string path, TopicManagementRequest request, CancellationToken cancellationToken)
         {
-            string url = $"{IID_HOST}/{path}";
-
+            HttpRequestMessageBuilder builder = new HttpRequestMessageBuilder(path, HttpMethod.Post)
+                .AddHeader("access_token_auth", "true");
 
         } 
 

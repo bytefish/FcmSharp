@@ -12,7 +12,7 @@ namespace FcmSharp.Requests
 
         [JsonProperty("body")]
         public string Body { get; set; }
-
+        
         [JsonProperty("icon")]
         public string Icon { get; set; }
 

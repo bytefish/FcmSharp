@@ -10,8 +10,9 @@
 	<RepositoryUrl>https://github.com/bytefish/FcmSharp</RepositoryUrl>
 	<PackageProjectUrl>https://github.com/bytefish/FcmSharp</PackageProjectUrl>
 	<PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
-	<Copyright>Copyright © 2017 Philipp Wagner</Copyright>
+	<Copyright>Copyright © 2018 Philipp Wagner</Copyright>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|x64'" />
