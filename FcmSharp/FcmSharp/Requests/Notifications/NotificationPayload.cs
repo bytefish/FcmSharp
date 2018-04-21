@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace FcmSharp.Requests.Notification
+namespace FcmSharp.Requests.Notifications
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class NotificationPayload
