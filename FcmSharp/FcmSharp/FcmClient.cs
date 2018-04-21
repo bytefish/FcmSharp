@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FcmSharp.Http;
+using FcmSharp.Requests;
 using FcmSharp.Responses;
 using FcmSharp.Settings;
 
@@ -14,6 +15,8 @@ namespace FcmSharp
     {
         private readonly IFcmClientSettings settings;
         private readonly IFcmHttpClient httpClient;
+
+        private static readonly String IID_HOST = "https://iid.googleapis.com";
 
         public FcmClient(IFcmClientSettings settings)
             : this(settings, new FcmHttpClient(settings))
@@ -36,10 +39,17 @@ namespace FcmSharp
             this.httpClient = httpClient;
         }
 
-        public Task<FcmMessageResponse> SendAsync(FcmMulticastMessage message, CancellationToken cancellationToken)
+        public Task<FcmMessageResponse> SendAsync(FcmMessage message, CancellationToken cancellationToken)
         {
             return httpClient.PostAsync<FcmMulticastMessage, FcmMessageResponse>(message, cancellationToken);
         }
+
+        public Task<FcmMessageResponse> SendTopicManagementRequestAsync(string path, TopicManagementRequest request, CancellationToken cancellationToken)
+        {
+            string url = $"{IID_HOST}/{path}";
+
+
+        } 
 
         public Task<FcmMessageResponse> SendAsync<TPayload>(FcmMulticastMessage<TPayload> message, CancellationToken cancellationToken)
         {

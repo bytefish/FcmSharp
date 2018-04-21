@@ -19,15 +19,4 @@ namespace FcmSharp.Requests
 
         ServerUnavailable = 6
     }
-
-    public enum IidErrorCodes
-    {
-        InvalidArgument = 0,
-
-        AuthenticationError = 1,
-
-        InternalError = 2,
-
-        ServerUnavailable = 3
-    }
 }
