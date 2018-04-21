@@ -29,6 +29,6 @@ namespace FcmSharp.Requests
         public Dictionary<string, string> data { get; set; }
 
         [JsonProperty("notification")]
-        public Notification Notification { get; set; }
+        public AndroidNotification Notification { get; set; }
     }
 }

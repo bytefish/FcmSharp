@@ -11,7 +11,7 @@ namespace FcmSharp.Requests
     public class Aps
     {
         [JsonProperty("alert")]
-        public string Alert { get; set; }
+        public ApsAlert Alert { get; set; }
 
         [JsonProperty("badge")]
         public string Badge { get; set; }
@@ -33,6 +33,7 @@ namespace FcmSharp.Requests
         [JsonProperty("thread-id")]
         public string ThreadId { get; set; }
 
+        [JsonExtensionData]
         public Dictionary<string, object> CustomData { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.13
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FcmSharp.Test", "FcmSharp.Test\FcmSharp.Test.csproj", "{1303F957-D15D-46F4-B589-9014499F0C36}"
 EndProject
@@ -35,14 +35,17 @@ Global
 		{C6F25AD7-4919-4F3F-AD7C-2A2D40C8ABCB}.Release|x64.Build.0 = Release|Any CPU
 		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Debug|x64.ActiveCfg = Debug|x64
-		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Debug|x64.Build.0 = Debug|x64
+		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Debug|x64.Build.0 = Debug|Any CPU
 		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Release|x64.ActiveCfg = Release|x64
-		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Release|x64.Build.0 = Release|x64
+		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Release|x64.ActiveCfg = Release|Any CPU
+		{8C9F9383-603C-4045-B0FE-D9D04102FB7F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DDC5CE5A-3ECA-4DF1-9812-18569768F8A9}
 	EndGlobalSection
 EndGlobal

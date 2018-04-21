@@ -14,5 +14,8 @@ namespace FcmSharp.Requests
 
         [JsonProperty("data")]
         public Dictionary<string, string> Data { get; set; }
+
+        [JsonProperty("notification")]
+        public WebpushNotification Notification { get; set; }
     }
 }

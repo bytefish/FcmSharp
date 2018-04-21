@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace FcmSharp.Requests
 {
-    public enum AndroidMessagePriorityEnum
+    public class ApnsPayload
     {
-        NORMAL,
-        HIGH
     }
 }
