@@ -7,6 +7,8 @@ namespace FcmSharp.Settings
     {
         string FcmUrl { get; }
 
+        string ProjectId { get; }
+
         string ApiKey { get; }
     }
 }
