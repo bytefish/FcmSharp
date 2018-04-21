@@ -16,7 +16,7 @@ namespace FcmSharp.Requests.Notification
         public string Body { get; set; }
         
         [JsonProperty("android_channel_id")]
-        public string AndroidChannelId { get; set; };
+        public string AndroidChannelId { get; set; }
 
         [JsonProperty("icon")]
         public string Icon { get; set; }
@@ -53,8 +53,11 @@ namespace FcmSharp.Requests.Notification
 
         public override string ToString()
         {
-            return string.Format("NotificationPayload (Sound = {0}, Badge = {1}, Tag = {2}, Color = {3}, ClickAction = {4}, BodyLocKey = {5}, BodyLocArgs = [{6}], TitleLocKey = {7}, TitleLocArgs = [{8}])",
-                Title, Body, Icon, Sound, Badge, Tag, Color, ClickAction, BodyLocKey, string.Join(", ", BodyLocArgs), TitleLocKey, string.Join(", ", TitleLocArgs));
+            // Build Comma Separated Argument List:
+            var bodyLocArgList = BodyLocArgs != null ? string.Join(", ", BodyLocArgs) : string.Empty;
+            var titleLocArgList = TitleLocArgs != null ? string.Join(", ", TitleLocArgs) : string.Empty;
+
+            return $"NotificationPayload (Sound = {Sound}, Badge = {Badge}, Tag = {Tag}, Color = {Color}, ClickAction = {ClickAction}, BodyLocKey = {BodyLocKey}, BodyLocArgs = [{bodyLocArgList}], TitleLocKey = {TitleLocKey}, TitleLocArgs = [{titleLocArgList}], AndroidChannelId = {AndroidChannelId})";
         }
     }
 }
