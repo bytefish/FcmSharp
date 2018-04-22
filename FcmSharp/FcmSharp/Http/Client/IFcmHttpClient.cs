@@ -5,17 +5,18 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using FcmSharp.Http.Builder;
 
-namespace FcmSharp.Http
+namespace FcmSharp.Http.Client
 {
     public interface IFcmHttpClient : IDisposable
     {
-        Task PostAsync<TRequestType>(TRequestType request, CancellationToken cancellationToken);
+        Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, CancellationToken cancellationToken);
 
-        Task PostAsync<TRequestType>(TRequestType request, HttpCompletionOption completionOption, CancellationToken cancellationToken);
+        Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken);
 
-        Task<TResponseType> PostAsync<TRequestType, TResponseType>(TRequestType request, CancellationToken cancellationToken);
+        Task SendAsync(HttpRequestMessageBuilder builder, CancellationToken cancellationToken);
 
-        Task<TResponseType> PostAsync<TRequestType, TResponseType>(TRequestType request, HttpCompletionOption completionOption, CancellationToken cancellationToken);
+        Task SendAsync(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken);
     }
 }

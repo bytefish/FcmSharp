@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FcmSharp.Exceptions;
 using FcmSharp.Http;
 using FcmSharp.Http.Builder;
 using FcmSharp.Http.Client;
@@ -24,23 +25,22 @@ namespace FcmSharp
     {
         private readonly IFcmClientSettings settings;
 
+        private readonly IJsonSerializer serializer;
+
         private readonly IFcmHttpClient httpClient;
         
-        private static readonly Dictionary<HttpStatusCode, String> IID_ERROR_CODES = new Dictionary<HttpStatusCode, string>
-        {
-            {HttpStatusCode.BadRequest, "invalid-argument"},
-            {HttpStatusCode.Unauthorized, "authentication-error"},
-            {HttpStatusCode.Forbidden, "authentication-error"},
-            {HttpStatusCode.InternalServerError, "internal-error"},
-            {HttpStatusCode.ServiceUnavailable, "503"}
-        };
-
         public FcmClient(IFcmClientSettings settings)
-            : this(settings, new FcmHttpClient(settings))
+            : this(settings, JsonSerializer.Default)
         {
         }
 
-        public FcmClient(IFcmClientSettings settings, IFcmHttpClient httpClient)
+        public FcmClient(IFcmClientSettings settings, IJsonSerializer serializer)
+            : this(settings, serializer, new FcmHttpClient(settings))
+        {
+        }
+
+
+        public FcmClient(IFcmClientSettings settings, IJsonSerializer serializer, IFcmHttpClient httpClient)
         {
             if (settings == null)
             {
@@ -52,19 +52,65 @@ namespace FcmSharp
                 throw new ArgumentNullException("httpClient");
             }
 
+            this.serializer = serializer;
             this.settings = settings;
             this.httpClient = httpClient;
         }
 
-
-
-        public void AddAuthorizationHeader(HttpRequestMessage httpRequestMessage)
+        public async Task<FcmMessageResponse> SendAsync(FcmMessage message, CancellationToken cancellationToken)
         {
-            string apiKey = settings.ApiKey;
+            // Construct the HTTP Message:
+            HttpRequestMessageBuilder httpRequestMessageBuilder = new HttpRequestMessageBuilder(settings.FcmUrl, HttpMethod.Post)
+                .SetStringContent(serializer.SerializeObject(message), Encoding.UTF8, MediaTypeNames.ApplicationJson);
 
-            httpRequestMessage.Headers.TryAddWithoutValidation(HttpHeaderNames.Authorization, string.Format("key={0}", apiKey));
+            try
+            {
+                return await httpClient.SendAsync<FcmMessageResponse>(httpRequestMessageBuilder, cancellationToken);
+            }
+            catch (FcmHttpException exception)
+            {
+                // Get the Original HTTP Response:
+                var response = exception.HttpResponseMessage;
+
+                // Read the Content:
+                var content = await response.Content.ReadAsStringAsync();
+
+                // Parse the Error:
+                var error = serializer.DeserializeObject<FcmMessageErrorResponse>(content);
+
+                // Throw the Exception:
+                throw new FcmMessageException(error);
+            }
         }
 
+        public async Task<TopicManagementResponse> SendAsync(TopicManagementRequest request, CancellationToken cancellationToken)
+        {
+
+            // Construct the HTTP Message:
+            HttpRequestMessageBuilder httpRequestMessageBuilder = new HttpRequestMessageBuilder(settings.IidHost, HttpMethod.Post)
+                // Add the Serialized Request Message:
+                .SetStringContent(serializer.SerializeObject(request), Encoding.UTF8, MediaTypeNames.ApplicationJson);
+
+            try
+            {
+                return await httpClient.SendAsync<TopicManagementResponse>(httpRequestMessageBuilder, cancellationToken);
+            }
+            catch (FcmHttpException exception)
+            {
+                // Get the Original HTTP Response:
+                var response = exception.HttpResponseMessage;
+
+                // Read the Content:
+                var content = await response.Content.ReadAsStringAsync();
+
+                // Parse the Error:
+                var error = serializer.DeserializeObject<FcmMessageErrorResponse>(content);
+
+                // Throw the Exception:
+                throw new FcmMessageException(error);
+            }
+        }
+        
         public void Dispose()
         {
             Dispose(true);
@@ -76,10 +122,7 @@ namespace FcmSharp
             // Make sure we Dispose the HttpClient, when we finish:
             if (disposing)
             {
-                if (httpClient != null)
-                {
-                    httpClient.Dispose();
-                }
+                httpClient?.Dispose();
             }
         }
     }

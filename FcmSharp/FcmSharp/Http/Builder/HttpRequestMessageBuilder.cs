@@ -19,21 +19,21 @@ namespace FcmSharp.Http.Builder
             }
         }
 
-        private string resource;
+        private string url;
         private HttpMethod httpMethod;
         private IDictionary<string, string> parameters;
         private IList<Header> headers;
         private IList<UrlSegment> segments;
         private HttpContent content;
 
-        public HttpRequestMessageBuilder(string resource, HttpMethod httpMethod)
+        public HttpRequestMessageBuilder(string url, HttpMethod httpMethod)
         {
-            if (resource == null)
+            if (url == null)
             {
-                throw new ArgumentNullException("resource");
+                throw new ArgumentNullException("url");
             }
 
-            this.resource = resource;
+            this.url = url;
             this.httpMethod = httpMethod;
             this.headers = new List<Header>();
             this.segments = new List<UrlSegment>();
@@ -85,7 +85,7 @@ namespace FcmSharp.Http.Builder
 
         public HttpRequestMessage Build()
         {
-            string resourceUrl = HttpRequestUtils.ReplaceSegments(resource, segments);
+            string resourceUrl = HttpRequestUtils.ReplaceSegments(url, segments);
             string queryString = HttpRequestUtils.BuildQueryString(resourceUrl, parameters);
             string resourceUrlWithQueryString = string.Format("{0}{1}", resourceUrl, queryString);
 

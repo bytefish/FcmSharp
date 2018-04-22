@@ -7,7 +7,7 @@ namespace FcmSharp.Settings
     {
         string FcmUrl { get; }
 
-        string IidUrl { get; }
+        string IidHost { get; }
 
         string Credentials { get; }
     }

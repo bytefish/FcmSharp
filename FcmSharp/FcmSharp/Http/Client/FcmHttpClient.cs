@@ -32,6 +32,7 @@ namespace FcmSharp.Http.Client
             {
                 throw new ArgumentNullException("settings");
             }
+
             if (client == null)
             {
                 throw new ArgumentNullException("client");
@@ -41,17 +42,24 @@ namespace FcmSharp.Http.Client
             {
                 throw new ArgumentNullException("serializer");
             }
-            
+
+            this.settings = settings;
             this.client = client;
             this.serializer = serializer;
         }
-        
+
+
+        public Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, CancellationToken cancellationToken)
+        {
+            return SendAsync<TResponseType>(builder, default(HttpCompletionOption), cancellationToken);
+        }
+
         public async Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
             // Build the Request Message:
             var httpRequestMessage = builder.Build();
 
-            // Add Auth Header:
+            // Add Authorization Header:
             var accessToken = await CreateAccessTokenAsync(cancellationToken);
 
             builder.AddHeader("Authorization", $"Bearer {accessToken}");
@@ -75,12 +83,17 @@ namespace FcmSharp.Http.Client
             return serializer.DeserializeObject<TResponseType>(httpResponseContentAsString);
         }
 
+        public Task SendAsync(HttpRequestMessageBuilder builder, CancellationToken cancellationToken)
+        {
+            return SendAsync(builder, default(HttpCompletionOption), cancellationToken);
+        }
+
         public async Task SendAsync(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
             // Build the Request Message:
             var httpRequestMessage = builder.Build();
 
-            // Add Auth Header:
+            // Add Authorization Header:
             var accessToken = await CreateAccessTokenAsync(cancellationToken);
 
             builder.AddHeader("Authorization", $"Bearer {accessToken}");
@@ -97,7 +110,6 @@ namespace FcmSharp.Http.Client
             // Apply the Response Interceptors:
             EvaluateResponse(httpResponseMessage);
         }
-
 
         protected virtual void OnBeforeRequest(HttpRequestMessage httpRequestMessage)
         {

@@ -8,13 +8,17 @@ namespace FcmSharp.Exceptions
 {
     public class FcmHttpException : Exception
     {
-        public FcmHttpException(HttpResponseMessage response)
+        public readonly HttpResponseMessage HttpResponseMessage;
+
+        public FcmHttpException(HttpResponseMessage httpResponseMessage)
         {
+            HttpResponseMessage = httpResponseMessage;
         }
 
-        public FcmHttpException(HttpResponseMessage response, string message) 
+        public FcmHttpException(HttpResponseMessage httpResponseMessage, string message) 
             : base(message)
         {
+            HttpResponseMessage = httpResponseMessage;
         }
     }
 }
