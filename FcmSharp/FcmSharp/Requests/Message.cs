@@ -9,7 +9,7 @@ namespace FcmSharp.Requests
     public class Message
     {
         [JsonProperty("data")]
-        public dynamic Data;
+        public Dictionary<string, string> Data;
 
         [JsonProperty("notification")]
         public Notification Notification;

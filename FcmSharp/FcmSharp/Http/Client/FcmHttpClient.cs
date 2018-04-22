@@ -56,14 +56,14 @@ namespace FcmSharp.Http.Client
 
         public async Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
-            // Build the Request Message:
-            var httpRequestMessage = builder.Build();
-
             // Add Authorization Header:
             var accessToken = await CreateAccessTokenAsync(cancellationToken);
 
             builder.AddHeader("Authorization", $"Bearer {accessToken}");
 
+            // Build the Request Message:
+            var httpRequestMessage = builder.Build();
+            
             // Invoke actions before the Request:
             OnBeforeRequest(httpRequestMessage);
 
@@ -90,14 +90,14 @@ namespace FcmSharp.Http.Client
 
         public async Task SendAsync(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
-            // Build the Request Message:
-            var httpRequestMessage = builder.Build();
-
             // Add Authorization Header:
             var accessToken = await CreateAccessTokenAsync(cancellationToken);
 
             builder.AddHeader("Authorization", $"Bearer {accessToken}");
 
+            // Build the Request Message:
+            var httpRequestMessage = builder.Build();
+            
             // Invoke actions before the Request:
             OnBeforeRequest(httpRequestMessage);
 

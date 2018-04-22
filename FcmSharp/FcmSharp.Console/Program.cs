@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using FcmSharp.Model.Options;
 using FcmSharp.Requests;
@@ -13,21 +14,17 @@ namespace FcmSharp.Console
     {
         public static void Main(string[] args)
         {
-            // Read the API Key from a File, which is not under Version Control:
-            var settings = FileBasedFcmClientSettings.CreateFromFile("abc-def", @"D:\credentials.txt");
+            // Read the Credentials from a File, which is not under Version Control:
+            var settings = FileBasedFcmClientSettings.CreateFromFile("your_app", @"D:\credentials.json");
 
             // Construct the Client:
             using (var client = new FcmClient(settings))
             {
                 // Construct the Data Payload to send:
-                var data = new
+                var data = new Dictionary<string, string>()
                 {
-                    A = new
-                    {
-                        a = 1,
-                        b = 2
-                    },
-                    B = 2,
+                    {"A", "B"},
+                    {"C", "D"}
                 };
 
                 // Options for the Message:
@@ -53,7 +50,9 @@ namespace FcmSharp.Console
                 var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
 
                 // Print the Result to the Console:
-                System.Console.WriteLine("Result = {0}", result);
+                System.Console.WriteLine("Message ID = {0}", result.Name);
+
+                System.Console.ReadLine();
             }
         }
     }
