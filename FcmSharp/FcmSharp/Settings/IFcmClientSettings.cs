@@ -5,10 +5,8 @@ namespace FcmSharp.Settings
 {
     public interface IFcmClientSettings
     {
-        string FcmUrl { get; }
-
-        string IidHost { get; }
-
+        string Project { get; }
+        
         string Credentials { get; }
     }
 }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -57,10 +58,17 @@ namespace FcmSharp
             this.httpClient = httpClient;
         }
 
-        public async Task<FcmMessageResponse> SendAsync(FcmMessage message, CancellationToken cancellationToken)
+        public async Task<FcmMessageResponse> SendAsync(FcmMessage message, CancellationToken cancellationToken = default(CancellationToken))
         {
+            if (message == null)
+            {
+                throw new ArgumentNullException("message");
+            }
+
+            string url = $"https://fcm.googleapis.com/v1/projects/{settings.Project}/messages:send";
+
             // Construct the HTTP Message:
-            HttpRequestMessageBuilder httpRequestMessageBuilder = new HttpRequestMessageBuilder(settings.FcmUrl, HttpMethod.Post)
+            HttpRequestMessageBuilder httpRequestMessageBuilder = new HttpRequestMessageBuilder(url, HttpMethod.Post)
                 .SetStringContent(serializer.SerializeObject(message), Encoding.UTF8, MediaTypeNames.ApplicationJson);
 
             try
@@ -83,11 +91,34 @@ namespace FcmSharp
             }
         }
 
-        public async Task<TopicManagementResponse> SendAsync(TopicManagementRequest request, CancellationToken cancellationToken)
+        public Task<TopicManagementResponse> SubscribeToTopic(TopicManagementRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
+            string iidSubscribePath = "iid/v1:batchAdd";
+
+            return SendAsync(iidSubscribePath, request, cancellationToken);
+        }
+
+        public Task<TopicManagementResponse> UnsubscribeFromTopic(TopicManagementRequest request, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            string iidUnsubscribePath = "iid/v1:batchRemove";
+
+            return SendAsync(iidUnsubscribePath, request, cancellationToken);
+        }
+        
+        private async Task<TopicManagementResponse> SendAsync(string path, TopicManagementRequest request, CancellationToken cancellationToken)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
+
+            // Build the URL:
+            string url = $"https://iid.googleapis.com/{path}";
 
             // Construct the HTTP Message:
-            HttpRequestMessageBuilder httpRequestMessageBuilder = new HttpRequestMessageBuilder(settings.IidHost, HttpMethod.Post)
+            HttpRequestMessageBuilder httpRequestMessageBuilder = new HttpRequestMessageBuilder(url, HttpMethod.Post)
+                // Add Option to use the Access Token Auth Header:
+                .AddHeader("access_token_auth", "true")
                 // Add the Serialized Request Message:
                 .SetStringContent(serializer.SerializeObject(request), Encoding.UTF8, MediaTypeNames.ApplicationJson);
 
@@ -104,10 +135,10 @@ namespace FcmSharp
                 var content = await response.Content.ReadAsStringAsync();
 
                 // Parse the Error:
-                var error = serializer.DeserializeObject<FcmMessageErrorResponse>(content);
+                var error = serializer.DeserializeObject<TopicMessageResponseError>(content);
 
                 // Throw the Exception:
-                throw new FcmMessageException(error);
+                throw new FcmTopicManagementException(error);
             }
         }
         

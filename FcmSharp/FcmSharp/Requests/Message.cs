@@ -8,9 +8,11 @@ namespace FcmSharp.Requests
 {
     public class Message
     {
-        [JsonProperty("data")] public Dictionary<string, string> Data;
+        [JsonProperty("data")]
+        public dynamic Data;
 
-        [JsonProperty("notification")] public Notification Notification;
+        [JsonProperty("notification")]
+        public Notification Notification;
 
         [JsonProperty("android")]
         public AndroidConfig AndroidConfig { get; set; }

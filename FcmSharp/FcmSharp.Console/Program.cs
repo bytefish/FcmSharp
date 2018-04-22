@@ -2,10 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using FcmSharp.Model.Options;
 using FcmSharp.Model.Topics;
-using FcmSharp.Requests.Topics;
+using FcmSharp.Requests;
 using FcmSharp.Settings;
 
 namespace FcmSharp.Console
@@ -15,7 +16,7 @@ namespace FcmSharp.Console
         public static void Main(string[] args)
         {
             // Read the API Key from a File, which is not under Version Control:
-            var settings = new FileBasedFcmClientSettings("/Users/bytefish/api.key");
+            var settings = FileBasedFcmClientSettings.CreateFromFile("abc-def", @"D:\credentials.txt");
 
             // Construct the Client:
             using (var client = new FcmClient(settings))
@@ -37,8 +38,16 @@ namespace FcmSharp.Console
                     .Build();
 
                 // The Message should be sent to the News Topic:
-                var message = new TopicUnicastMessage<dynamic>(options, new Topic("news"), data);
-
+                var message = new FcmMessage()
+                {
+                    ValidateOnly = false,
+                    Message = new Message
+                    {
+                        Topic = "news",
+                        Data = data
+                    }
+                };
+                
                 // Finally send the Message and wait for the Result:
                 CancellationTokenSource cts = new CancellationTokenSource();
 

@@ -3,7 +3,6 @@
 
 using FcmSharp.Responses.Converters;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace FcmSharp.Responses
 {
@@ -17,17 +16,15 @@ namespace FcmSharp.Responses
             Internal,
             TooManyTopics
         }
-
+        
         public class ResultItem
         {
             [JsonProperty("error")]
             [JsonConverter(typeof(TopicErrorEnumConverter))]
             public Error? ErrorCode { get; set; }
-
-            public override string ToString()
-            {
-                return string.Format("TopicMessageResponse (MessageId = {0}, ErrorCode = {1})", MessageId, ErrorCode);
-            }
         }
+
+        [JsonProperty("results")]
+        public ResultItem[] Results { get; set; }
     }
 }

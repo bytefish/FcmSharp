@@ -5,6 +5,6 @@ namespace FcmSharp.Constants
 {
     public class FcmConstants
     {
-        public const string FcmUrl = "https://fcm.googleapis.com/fcm/send";
+        
     }
 }

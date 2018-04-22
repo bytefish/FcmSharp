@@ -167,5 +167,10 @@ namespace FcmSharp.Http.Client
                 throw new FcmHttpException(response);
             }
         }
+
+        public void Dispose()
+        {
+            client?.Dispose();
+        }
     }
 }
