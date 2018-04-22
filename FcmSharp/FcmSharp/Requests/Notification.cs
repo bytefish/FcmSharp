@@ -5,12 +5,12 @@ using Newtonsoft.Json;
 
 namespace FcmSharp.Requests
 {
-    public class FcmMessage
+    public class Notification
     {
-        [JsonProperty("validate_only")]
-        public bool ValidateOnly { get; set; }
+        [JsonProperty("title")]
+        public string Title { get; set; }
 
-        [JsonProperty("message")]
-        public Message Message { get; set; }
+        [JsonProperty("body")]
+        public string Body { get; set; }
     }
 }

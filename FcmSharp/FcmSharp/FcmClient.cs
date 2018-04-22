@@ -2,28 +2,46 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FcmSharp.Exceptions;
 using FcmSharp.Http;
+using FcmSharp.Http.Builder;
+using FcmSharp.Http.Client;
+using FcmSharp.Http.Constants;
 using FcmSharp.Requests;
-using FcmSharp.Requests.DeviceGroup;
-using FcmSharp.Requests.Topics;
 using FcmSharp.Responses;
+using FcmSharp.Serializer;
 using FcmSharp.Settings;
+using Google.Apis.Auth.OAuth2;
 
 namespace FcmSharp
 {
     public class FcmClient : IFcmClient
     {
         private readonly IFcmClientSettings settings;
-        private readonly IFcmHttpClient httpClient;
 
+        private readonly IJsonSerializer serializer;
+
+        private readonly IFcmHttpClient httpClient;
+        
         public FcmClient(IFcmClientSettings settings)
-            : this(settings, new FcmHttpClient(settings))
+            : this(settings, JsonSerializer.Default)
         {
         }
 
-        public FcmClient(IFcmClientSettings settings, IFcmHttpClient httpClient)
+        public FcmClient(IFcmClientSettings settings, IJsonSerializer serializer)
+            : this(settings, serializer, new FcmHttpClient(settings))
+        {
+        }
+
+
+        public FcmClient(IFcmClientSettings settings, IJsonSerializer serializer, IFcmHttpClient httpClient)
         {
             if (settings == null)
             {
@@ -35,65 +53,95 @@ namespace FcmSharp
                 throw new ArgumentNullException("httpClient");
             }
 
+            this.serializer = serializer;
             this.settings = settings;
             this.httpClient = httpClient;
         }
 
-        public Task<FcmMessageResponse> SendAsync(FcmMulticastMessage message, CancellationToken cancellationToken)
+        public async Task<FcmMessageResponse> SendAsync(FcmMessage message, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return httpClient.PostAsync<FcmMulticastMessage, FcmMessageResponse>(message, cancellationToken);
+            if (message == null)
+            {
+                throw new ArgumentNullException("message");
+            }
+
+            string url = $"https://fcm.googleapis.com/v1/projects/{settings.Project}/messages:send";
+
+            // Construct the HTTP Message:
+            HttpRequestMessageBuilder httpRequestMessageBuilder = new HttpRequestMessageBuilder(url, HttpMethod.Post)
+                .SetStringContent(serializer.SerializeObject(message), Encoding.UTF8, MediaTypeNames.ApplicationJson);
+
+            try
+            {
+                return await httpClient.SendAsync<FcmMessageResponse>(httpRequestMessageBuilder, cancellationToken);
+            }
+            catch (FcmHttpException exception)
+            {
+                // Get the Original HTTP Response:
+                var response = exception.HttpResponseMessage;
+
+                // Read the Content:
+                var content = await response.Content.ReadAsStringAsync();
+
+                // Parse the Error:
+                var error = serializer.DeserializeObject<FcmMessageErrorResponse>(content);
+
+                // Throw the Exception:
+                throw new FcmMessageException(error);
+            }
         }
 
-        public Task<FcmMessageResponse> SendAsync<TPayload>(FcmMulticastMessage<TPayload> message, CancellationToken cancellationToken)
+        public Task<TopicManagementResponse> SubscribeToTopic(TopicManagementRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return httpClient.PostAsync<FcmMulticastMessage, FcmMessageResponse>(message, cancellationToken);
+            string iidSubscribePath = "iid/v1:batchAdd";
+
+            return SendAsync(iidSubscribePath, request, cancellationToken);
         }
 
-        public Task<FcmMessageResponse> SendAsync(FcmUnicastMessage message, CancellationToken cancellationToken)
+        public Task<TopicManagementResponse> UnsubscribeFromTopic(TopicManagementRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return httpClient.PostAsync<FcmUnicastMessage, FcmMessageResponse>(message, cancellationToken);
-        }
+            string iidUnsubscribePath = "iid/v1:batchRemove";
 
-        public Task<FcmMessageResponse> SendAsync<TPayload>(FcmUnicastMessage<TPayload> message, CancellationToken cancellationToken)
+            return SendAsync(iidUnsubscribePath, request, cancellationToken);
+        }
+        
+        private async Task<TopicManagementResponse> SendAsync(string path, TopicManagementRequest request, CancellationToken cancellationToken)
         {
-            return httpClient.PostAsync<FcmUnicastMessage<TPayload>, FcmMessageResponse>(message, cancellationToken);
-        }
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
 
-        public Task<CreateDeviceGroupMessageResponse> SendAsync(CreateDeviceGroupMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<CreateDeviceGroupMessage, CreateDeviceGroupMessageResponse>(message, cancellationToken);
-        }
+            // Build the URL:
+            string url = $"https://iid.googleapis.com/{path}";
 
-        public Task SendAsync(RemoveDeviceGroupMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync(message, cancellationToken);
-        }
+            // Construct the HTTP Message:
+            HttpRequestMessageBuilder httpRequestMessageBuilder = new HttpRequestMessageBuilder(url, HttpMethod.Post)
+                // Add Option to use the Access Token Auth Header:
+                .AddHeader("access_token_auth", "true")
+                // Add the Serialized Request Message:
+                .SetStringContent(serializer.SerializeObject(request), Encoding.UTF8, MediaTypeNames.ApplicationJson);
 
-        public Task SendAsync(AddDeviceGroupMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync(message, cancellationToken);
-        }
+            try
+            {
+                return await httpClient.SendAsync<TopicManagementResponse>(httpRequestMessageBuilder, cancellationToken);
+            }
+            catch (FcmHttpException exception)
+            {
+                // Get the Original HTTP Response:
+                var response = exception.HttpResponseMessage;
 
-        public Task<TopicMessageResponse> SendAsync(TopicUnicastMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<TopicUnicastMessage, TopicMessageResponse>(message, cancellationToken);
-        }
+                // Read the Content:
+                var content = await response.Content.ReadAsStringAsync();
 
-        public Task<TopicMessageResponse> SendAsync<TPayload>(TopicUnicastMessage<TPayload> message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<TopicUnicastMessage<TPayload>, TopicMessageResponse>(message, cancellationToken);
-        }
+                // Parse the Error:
+                var error = serializer.DeserializeObject<TopicMessageResponseError>(content);
 
-        public Task<TopicMessageResponse> SendAsync(TopicMulticastMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<TopicMulticastMessage, TopicMessageResponse>(message, cancellationToken);
+                // Throw the Exception:
+                throw new FcmTopicManagementException(error);
+            }
         }
-
-        public Task<TopicMessageResponse> SendAsync<TPayload>(TopicMulticastMessage<TPayload> message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<TopicMulticastMessage<TPayload>, TopicMessageResponse>(message, cancellationToken);
-        }
-
+        
         public void Dispose()
         {
             Dispose(true);
@@ -105,10 +153,7 @@ namespace FcmSharp
             // Make sure we Dispose the HttpClient, when we finish:
             if (disposing)
             {
-                if (httpClient != null)
-                {
-                    httpClient.Dispose();
-                }
+                httpClient?.Dispose();
             }
         }
     }

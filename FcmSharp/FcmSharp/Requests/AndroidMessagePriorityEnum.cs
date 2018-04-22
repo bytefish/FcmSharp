@@ -1,10 +1,11 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace FcmSharp.Constants
+namespace FcmSharp.Requests
 {
-    public class FcmConstants
+    public enum AndroidMessagePriorityEnum
     {
-        
+        NORMAL,
+        HIGH
     }
 }

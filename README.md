@@ -5,12 +5,9 @@
 
 [FcmSharp] is a .NET library for the Firebase Cloud Messaging (FCM) API. 
 
-It implements the entire [Firebase Cloud Messaging HTTP Protocol] and supports:
+It implements the Firebase Cloud Messaging HTTP v1 API:
 
-* Downstream HTTP Messages
-* Notification Payloads
-* Topic Messages
-* Device Group Messages
+* https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
 
 [FcmSharp] supports .NET Core as of Version 1.0.0.
 
@@ -34,8 +31,7 @@ The Quickstart shows you how to work with [FcmSharp] in C#.
 using System;
 using System.Threading;
 using FcmSharp.Model.Options;
-using FcmSharp.Model.Topics;
-using FcmSharp.Requests.Topics;
+using FcmSharp.Requests;
 using FcmSharp.Settings;
 
 namespace FcmSharp.Console
@@ -45,7 +41,7 @@ namespace FcmSharp.Console
         public static void Main(string[] args)
         {
             // Read the API Key from a File, which is not under Version Control:
-            var settings = new FileBasedFcmClientSettings("/Users/bytefish/api.key");
+            var settings = FileBasedFcmClientSettings.CreateFromFile("abc-def", @"D:\credentials.txt");
 
             // Construct the Client:
             using (var client = new FcmClient(settings))
@@ -67,8 +63,16 @@ namespace FcmSharp.Console
                     .Build();
 
                 // The Message should be sent to the News Topic:
-                var message = new TopicUnicastMessage<dynamic>(options, new Topic("news"), data);
-
+                var message = new FcmMessage()
+                {
+                    ValidateOnly = false,
+                    Message = new Message
+                    {
+                        Topic = "news",
+                        Data = data
+                    }
+                };
+                
                 // Finally send the Message and wait for the Result:
                 CancellationTokenSource cts = new CancellationTokenSource();
 

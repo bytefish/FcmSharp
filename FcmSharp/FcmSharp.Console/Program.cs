@@ -2,10 +2,10 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using FcmSharp.Model.Options;
-using FcmSharp.Model.Topics;
-using FcmSharp.Requests.Topics;
+using FcmSharp.Requests;
 using FcmSharp.Settings;
 
 namespace FcmSharp.Console
@@ -14,21 +14,17 @@ namespace FcmSharp.Console
     {
         public static void Main(string[] args)
         {
-            // Read the API Key from a File, which is not under Version Control:
-            var settings = new FileBasedFcmClientSettings("/Users/bytefish/api.key");
+            // Read the Credentials from a File, which is not under Version Control:
+            var settings = FileBasedFcmClientSettings.CreateFromFile("your_app", @"D:\credentials.json");
 
             // Construct the Client:
             using (var client = new FcmClient(settings))
             {
                 // Construct the Data Payload to send:
-                var data = new
+                var data = new Dictionary<string, string>()
                 {
-                    A = new
-                    {
-                        a = 1,
-                        b = 2
-                    },
-                    B = 2,
+                    {"A", "B"},
+                    {"C", "D"}
                 };
 
                 // Options for the Message:
@@ -37,8 +33,16 @@ namespace FcmSharp.Console
                     .Build();
 
                 // The Message should be sent to the News Topic:
-                var message = new TopicUnicastMessage<dynamic>(options, new Topic("news"), data);
-
+                var message = new FcmMessage()
+                {
+                    ValidateOnly = false,
+                    Message = new Message
+                    {
+                        Topic = "news",
+                        Data = data
+                    }
+                };
+                
                 // Finally send the Message and wait for the Result:
                 CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -46,7 +50,9 @@ namespace FcmSharp.Console
                 var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
 
                 // Print the Result to the Console:
-                System.Console.WriteLine("Result = {0}", result);
+                System.Console.WriteLine("Message ID = {0}", result.Name);
+
+                System.Console.ReadLine();
             }
         }
     }

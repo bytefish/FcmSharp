@@ -3,35 +3,19 @@
 
 using System;
 using System.IO;
-using FcmSharp.Constants;
 
 namespace FcmSharp.Settings
 {
-    public class FileBasedFcmClientSettings : IFcmClientSettings
+    public static class FileBasedFcmClientSettings
     {
-        private readonly string apiKey;
-
-        public FileBasedFcmClientSettings(string fileName)
+        public static FcmClientSettings CreateFromFile(string project, string credentialsFileName)
         {
-            if (fileName == null)
-            {
-                throw new ArgumentNullException("fileName");
-            }
+            var credentials = ReadCredentialsFromFile(credentialsFileName);
 
-            this.apiKey = ReadApiKeyFromFile(fileName);
+            return new FcmClientSettings(project, credentials);
         }
 
-        public string FcmUrl
-        {
-            get { return FcmConstants.FcmUrl; }
-        }
-
-        public string ApiKey
-        {
-            get { return apiKey; }
-        }
-
-        private string ReadApiKeyFromFile(string fileName)
+        private static string ReadCredentialsFromFile(string fileName)
         {
             if (fileName == null)
             {
@@ -40,17 +24,17 @@ namespace FcmSharp.Settings
 
             if (!File.Exists(fileName))
             {
-                throw new Exception(string.Format("Could not Read API Token. (Reason = File Does Not Exist, FileName = '{0}')", fileName));
+                throw new Exception(string.Format("Could not Read Credentials. (Reason = File Does Not Exist, FileName = '{0}')", fileName));
             }
 
-            string apiKey = File.ReadAllText(fileName);
+            string credentials = File.ReadAllText(fileName);
 
-            if (string.IsNullOrWhiteSpace(apiKey))
+            if (string.IsNullOrWhiteSpace(credentials))
             {
-                throw new Exception(string.Format("Could not Read API Token. (Reason = File Is Empty, FileName = '{0}')", fileName));
+                throw new Exception(string.Format("Could not Read Credentials. (Reason = File Is Empty, FileName = '{0}')", fileName));
             }
 
-            return apiKey.Trim();
+            return credentials;
         }
     }
 }

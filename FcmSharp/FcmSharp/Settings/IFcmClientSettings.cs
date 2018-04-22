@@ -5,8 +5,8 @@ namespace FcmSharp.Settings
 {
     public interface IFcmClientSettings
     {
-        string FcmUrl { get; }
-
-        string ApiKey { get; }
+        string Project { get; }
+        
+        string Credentials { get; }
     }
 }

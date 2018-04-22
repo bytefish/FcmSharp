@@ -7,22 +7,19 @@ using Newtonsoft.Json;
 
 namespace FcmSharp.Requests.Converters
 {
-    public class OperationEnumConverter : JsonConverter
+    public class AndroidMessagePriorityEnumConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            OperationEnum operation = (OperationEnum)value;
+            AndroidMessagePriorityEnum operation = (AndroidMessagePriorityEnum)value;
 
             switch (operation)
             {
-                case OperationEnum.Add:
-                    writer.WriteValue("add");
+                case AndroidMessagePriorityEnum.HIGH:
+                    writer.WriteValue("HIGH");
                     break;
-                case OperationEnum.Create:
-                    writer.WriteValue("create");
-                    break;
-                case OperationEnum.Remove:
-                    writer.WriteValue("remove");
+                case AndroidMessagePriorityEnum.NORMAL:
+                    writer.WriteValue("NORMAL");
                     break;
             }
         }
@@ -36,7 +33,7 @@ namespace FcmSharp.Requests.Converters
                 return null;
             }
 
-            return Enum.Parse(typeof(OperationEnum), enumString, true);
+            return Enum.Parse(typeof(AndroidMessagePriorityEnum), enumString, true);
         }
 
         public override bool CanConvert(Type objectType)

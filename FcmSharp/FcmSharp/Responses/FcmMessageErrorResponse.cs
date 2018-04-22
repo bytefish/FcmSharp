@@ -1,13 +1,14 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace FcmSharp.Responses
 {
-    public class CreateDeviceGroupMessageResponse
+    public class FcmMessageErrorResponse
     {
-        [JsonProperty("notification_key")]
-        public string NotificationKey { get; set; }
+        [JsonProperty("error")]
+        public Dictionary<string, object> Error { get; set; }
     }
 }

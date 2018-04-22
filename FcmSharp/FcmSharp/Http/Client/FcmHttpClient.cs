@@ -3,31 +3,30 @@
 
 using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using FcmSharp.Exceptions;
-using FcmSharp.Http.Retry;
+using FcmSharp.Http.Builder;
 using FcmSharp.Serializer;
-using FcmSharp.Http.Constants;
 using FcmSharp.Settings;
-using FcmSharp.Http.Utils;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Http;
 
-namespace FcmSharp.Http
+namespace FcmSharp.Http.Client
 {
     public class FcmHttpClient : IFcmHttpClient
     {
-        private readonly HttpClient client;
-        private readonly IJsonSerializer serializer;
+        private readonly ConfigurableHttpClient client;
         private readonly IFcmClientSettings settings;
+        private readonly IJsonSerializer serializer;
 
         public FcmHttpClient(IFcmClientSettings settings)
-            : this(settings, new HttpClient(), JsonSerializer.Default)
+            : this(settings, new ConfigurableHttpClient(new ConfigurableMessageHandler(new HttpClientHandler())), JsonSerializer.Default)
         {
         }
 
-        public FcmHttpClient(IFcmClientSettings settings, HttpClient client, IJsonSerializer serializer)
+        public FcmHttpClient(IFcmClientSettings settings, ConfigurableHttpClient client, IJsonSerializer serializer)
         {
             if (settings == null)
             {
@@ -49,25 +48,22 @@ namespace FcmSharp.Http
             this.serializer = serializer;
         }
 
-        public async Task<TResponseType> PostAsync<TRequestType, TResponseType>(TRequestType request, CancellationToken cancellationToken)
+
+        public Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, CancellationToken cancellationToken)
         {
-            return await PostAsync<TRequestType, TResponseType>(request, default(HttpCompletionOption), cancellationToken);
+            return SendAsync<TResponseType>(builder, default(HttpCompletionOption), cancellationToken);
         }
 
-        public async Task<TResponseType> PostAsync<TRequestType, TResponseType>(TRequestType request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+        public async Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
-            // Now build the HTTP Request Message:
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, settings.FcmUrl);
+            // Add Authorization Header:
+            var accessToken = await CreateAccessTokenAsync(cancellationToken);
+
+            builder.AddHeader("Authorization", $"Bearer {accessToken}");
+
+            // Build the Request Message:
+            var httpRequestMessage = builder.Build();
             
-            // Build the Content of the Request:
-            StringContent content = new StringContent(serializer.SerializeObject(request), Encoding.UTF8, MediaTypeNames.ApplicationJson);
-
-            // Append it to the Request:
-            httpRequestMessage.Content = content;
-
-            // Add the Authorization Header with the API Key:
-            AddAuthorizationHeader(httpRequestMessage);
-
             // Invoke actions before the Request:
             OnBeforeRequest(httpRequestMessage);
 
@@ -77,7 +73,7 @@ namespace FcmSharp.Http
             // Invoke actions after the Request:
             OnAfterResponse(httpRequestMessage, httpResponseMessage);
 
-            // Evaluate the Response:
+            // Apply the Response Interceptors:
             EvaluateResponse(httpResponseMessage);
 
             // Now read the Response Content as String:
@@ -87,22 +83,21 @@ namespace FcmSharp.Http
             return serializer.DeserializeObject<TResponseType>(httpResponseContentAsString);
         }
 
-        public async Task PostAsync<TRequestType>(TRequestType request, CancellationToken cancellationToken)
+        public Task SendAsync(HttpRequestMessageBuilder builder, CancellationToken cancellationToken)
         {
-            await PostAsync(request, default(HttpCompletionOption), cancellationToken);
+            return SendAsync(builder, default(HttpCompletionOption), cancellationToken);
         }
 
-        public async Task PostAsync<TRequestType>(TRequestType request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
+        public async Task SendAsync(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
-            // Build the HTTP Request Message:
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, settings.FcmUrl);
+            // Add Authorization Header:
+            var accessToken = await CreateAccessTokenAsync(cancellationToken);
+
+            builder.AddHeader("Authorization", $"Bearer {accessToken}");
+
+            // Build the Request Message:
+            var httpRequestMessage = builder.Build();
             
-            // Build the Content of the Request:
-            httpRequestMessage.Content = new StringContent(serializer.SerializeObject(request), Encoding.UTF8, MediaTypeNames.ApplicationJson);
-
-            // Add the Authorization Header with the API Key:
-            AddAuthorizationHeader(httpRequestMessage);
-
             // Invoke actions before the Request:
             OnBeforeRequest(httpRequestMessage);
 
@@ -118,17 +113,39 @@ namespace FcmSharp.Http
 
         protected virtual void OnBeforeRequest(HttpRequestMessage httpRequestMessage)
         {
+        
         }
 
         protected virtual void OnAfterResponse(HttpRequestMessage httpRequestMessage, HttpResponseMessage httpResponseMessage)
         {
         }
 
-        public void AddAuthorizationHeader(HttpRequestMessage httpRequestMessage)
+        private async Task<string> CreateAccessTokenAsync(CancellationToken cancellationToken)
         {
-            string apiKey = settings.ApiKey;
+            
+            var credential = GoogleCredential.FromJson(settings.Credentials)    
+                // We need the Messaging Scope:
+                .CreateScoped("https://www.googleapis.com/auth/firebase.messaging")
+                // Cast to the ServiceAccountCredential:
+                .UnderlyingCredential as ServiceAccountCredential;
+            
+            if (credential == null)
+            {
+                throw new Exception("Error creating Access Token for Authorizing Request");
+            }
 
-            httpRequestMessage.Headers.TryAddWithoutValidation(HttpHeaderNames.Authorization, string.Format("key={0}", apiKey));
+            // Initialize with the Configurable Client:
+            credential.Initialize(client);
+
+            // Execute the Request:
+            var accessToken = await credential.GetAccessTokenForRequestAsync(cancellationToken: cancellationToken);
+
+            if (accessToken == null)
+            {
+                throw new Exception("Empty Access Token for Authorizing Request");
+            }
+
+            return accessToken;
         }
 
         public void EvaluateResponse(HttpResponseMessage response)
@@ -145,49 +162,15 @@ namespace FcmSharp.Http
                 return;
             }
 
-            String reasonPhrase = response.ReasonPhrase;
-
-            if (httpStatusCode == HttpStatusCode.BadRequest)
+            if ((int) httpStatusCode >= 400)
             {
-                throw new FcmBadRequestException(reasonPhrase);
+                throw new FcmHttpException(response);
             }
-
-            if (httpStatusCode == HttpStatusCode.Unauthorized)
-            {
-                throw new FcmAuthenticationException(reasonPhrase);
-            }
-
-            int httpStatusCodeIntegerValue = Convert.ToInt32(httpStatusCode);
-
-            if (httpStatusCodeIntegerValue >= 500 && httpStatusCodeIntegerValue < 600)
-            {
-                RetryConditionValue retryConditionValue;
-
-                if (RetryUtils.TryDetermineRetryDelay(response, out retryConditionValue))
-                {
-                    throw new FcmRetryAfterException(reasonPhrase, retryConditionValue);
-                }
-            }
-
-            throw new FcmGeneralException(reasonPhrase);
         }
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            // Make sure we Dispose the HttpClient, when we finish:
-            if (disposing)
-            {
-                if (client != null)
-                {
-                    client.Dispose();
-                }
-            }
+            client?.Dispose();
         }
     }
 }
