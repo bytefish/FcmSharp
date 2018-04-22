@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using Newtonsoft.Json;
 
 namespace FcmSharp.Requests.Converters
@@ -20,11 +19,7 @@ namespace FcmSharp.Requests.Converters
 
             string timeToLiveInSeconds = string.Format("{0}s", (int) timeSpan.Value.TotalSeconds);
             
-            writer.WriteStartObject();
-            
             writer.WriteValue(timeToLiveInSeconds);
-
-            writer.WriteEndObject();
 
         }
 

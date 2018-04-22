@@ -26,7 +26,7 @@ namespace FcmSharp.Requests
         public string[] TitleLocArgs { get; set; }
 
         [JsonProperty("action-loc-key")]
-        public string[] ActionLocKey { get; set; }
+        public string ActionLocKey { get; set; }
 
         [JsonProperty("launch-image")]
         public string LaunchImage { get; set; }

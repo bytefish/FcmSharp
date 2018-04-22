@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using Newtonsoft.Json;
 
 namespace FcmSharp.Requests.Converters
@@ -13,12 +12,7 @@ namespace FcmSharp.Requests.Converters
         {
             bool booleanValue = (bool)value;
            
-            writer.WriteStartObject();
-
             writer.WriteValue(Convert.ToInt32(booleanValue));
-            
-            writer.WriteEndObject();
-
         }
         
 
@@ -29,7 +23,7 @@ namespace FcmSharp.Requests.Converters
 
         public override bool CanConvert(Type objectType)
         {
-            return typeof(TimeSpan?) == objectType;
+            return typeof(bool) == objectType;
         }
     }
 }
