@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace FcmSharp.Responses.Converters
 {
-    public class TopicManagementResponseErrorEnumConverter : JsonConverter
+    public class TopicErrorEnumConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
@@ -23,15 +23,15 @@ namespace FcmSharp.Responses.Converters
             switch (errorString)
             {
                 case "INVALID_ARGUMENT":
-                    return TopicManagementResponseErrorEnum.InvalidArgument;
+                    return TopicManagementResponse.Error.InvalidArgument;
                 case "NOT_FOUND":
-                    return TopicManagementResponseErrorEnum.NotFound;
+                    return TopicManagementResponse.Error.NotFound;
                 case "INTERNAL":
-                    return TopicManagementResponseErrorEnum.Internal;
+                    return TopicManagementResponse.Error.Internal;
                 case "TOO_MANY_TOPICS":
-                    return TopicManagementResponseErrorEnum.TooManyTopics;
+                    return TopicManagementResponse.Error.TooManyTopics;
                 default:
-                    return TopicManagementResponseErrorEnum.Unknown;
+                    return TopicManagementResponse.Error.Unknown;
             }
         }
 

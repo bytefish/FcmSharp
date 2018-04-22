@@ -2,23 +2,38 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FcmSharp.Http;
 using FcmSharp.Http.Builder;
+using FcmSharp.Http.Client;
+using FcmSharp.Http.Constants;
 using FcmSharp.Requests;
 using FcmSharp.Responses;
+using FcmSharp.Serializer;
 using FcmSharp.Settings;
+using Google.Apis.Auth.OAuth2;
 
 namespace FcmSharp
 {
     public class FcmClient : IFcmClient
     {
         private readonly IFcmClientSettings settings;
-        private readonly IFcmHttpClient httpClient;
 
-        private static readonly String IID_HOST = "https://iid.googleapis.com";
+        private readonly IFcmHttpClient httpClient;
+        
+        private static readonly Dictionary<HttpStatusCode, String> IID_ERROR_CODES = new Dictionary<HttpStatusCode, string>
+        {
+            {HttpStatusCode.BadRequest, "invalid-argument"},
+            {HttpStatusCode.Unauthorized, "authentication-error"},
+            {HttpStatusCode.Forbidden, "authentication-error"},
+            {HttpStatusCode.InternalServerError, "internal-error"},
+            {HttpStatusCode.ServiceUnavailable, "503"}
+        };
 
         public FcmClient(IFcmClientSettings settings)
             : this(settings, new FcmHttpClient(settings))
@@ -41,66 +56,13 @@ namespace FcmSharp
             this.httpClient = httpClient;
         }
 
-        public Task<FcmMessageResponse> SendAsync(FcmMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<FcmMulticastMessage, FcmMessageResponse>(message, cancellationToken);
-        }
 
-        public Task<FcmMessageResponse> SendTopicManagementRequestAsync(string path, TopicManagementRequest request, CancellationToken cancellationToken)
-        {
-            HttpRequestMessageBuilder builder = new HttpRequestMessageBuilder(path, HttpMethod.Post)
-                .AddHeader("access_token_auth", "true");
 
-        } 
-
-        public Task<FcmMessageResponse> SendAsync<TPayload>(FcmMulticastMessage<TPayload> message, CancellationToken cancellationToken)
+        public void AddAuthorizationHeader(HttpRequestMessage httpRequestMessage)
         {
-            return httpClient.PostAsync<FcmMulticastMessage, FcmMessageResponse>(message, cancellationToken);
-        }
+            string apiKey = settings.ApiKey;
 
-        public Task<FcmMessageResponse> SendAsync(FcmUnicastMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<FcmUnicastMessage, FcmMessageResponse>(message, cancellationToken);
-        }
-
-        public Task<FcmMessageResponse> SendAsync<TPayload>(FcmUnicastMessage<TPayload> message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<FcmUnicastMessage<TPayload>, FcmMessageResponse>(message, cancellationToken);
-        }
-
-        public Task<CreateDeviceGroupMessageResponse> SendAsync(CreateDeviceGroupMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<CreateDeviceGroupMessage, CreateDeviceGroupMessageResponse>(message, cancellationToken);
-        }
-
-        public Task SendAsync(RemoveDeviceGroupMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync(message, cancellationToken);
-        }
-
-        public Task SendAsync(AddDeviceGroupMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync(message, cancellationToken);
-        }
-
-        public Task<TopicMessageResponse> SendAsync(TopicUnicastMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<TopicUnicastMessage, TopicMessageResponse>(message, cancellationToken);
-        }
-
-        public Task<TopicMessageResponse> SendAsync<TPayload>(TopicUnicastMessage<TPayload> message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<TopicUnicastMessage<TPayload>, TopicMessageResponse>(message, cancellationToken);
-        }
-
-        public Task<TopicMessageResponse> SendAsync(TopicMulticastMessage message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<TopicMulticastMessage, TopicMessageResponse>(message, cancellationToken);
-        }
-
-        public Task<TopicMessageResponse> SendAsync<TPayload>(TopicMulticastMessage<TPayload> message, CancellationToken cancellationToken)
-        {
-            return httpClient.PostAsync<TopicMulticastMessage<TPayload>, TopicMessageResponse>(message, cancellationToken);
+            httpRequestMessage.Headers.TryAddWithoutValidation(HttpHeaderNames.Authorization, string.Format("key={0}", apiKey));
         }
 
         public void Dispose()
