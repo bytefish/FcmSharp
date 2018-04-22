@@ -2,15 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FcmSharp.Exceptions;
-using FcmSharp.Http;
 using FcmSharp.Http.Builder;
 using FcmSharp.Http.Client;
 using FcmSharp.Http.Constants;
@@ -18,7 +14,6 @@ using FcmSharp.Requests;
 using FcmSharp.Responses;
 using FcmSharp.Serializer;
 using FcmSharp.Settings;
-using Google.Apis.Auth.OAuth2;
 
 namespace FcmSharp
 {

@@ -1,10 +1,8 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using System.Threading;
-using FcmSharp.Model.Options;
 using FcmSharp.Requests;
 using FcmSharp.Settings;
 
@@ -26,11 +24,6 @@ namespace FcmSharp.Console
                     {"A", "B"},
                     {"C", "D"}
                 };
-
-                // Options for the Message:
-                var options = FcmMessageOptions.Builder()
-                    .setTimeToLive(TimeSpan.FromDays(1))
-                    .Build();
 
                 // The Message should be sent to the News Topic:
                 var message = new FcmMessage()

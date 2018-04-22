@@ -2,21 +2,12 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 
-using FcmSharp.Http.Constants;
-using FcmSharp.Model.Options;
-using FcmSharp.Model.Topics;
-using FcmSharp.Serializer;
-using FcmSharp.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using System;
 using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Threading;
 
 namespace FcmSharp.Test.Integration
 {
