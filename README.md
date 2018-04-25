@@ -20,6 +20,10 @@ in the [Package Manager Console](http://docs.nuget.org/consume/package-manager-c
 PM> Install-Package FcmSharp
 ```
 
+## Downloading the JSON Service Account Key ##
+
+Go to the Firebase Console, choose your project. Then in the menu select ``Settings`` and select the Tab ``Service Accounts``. Then scroll down and select ``Generate Private Key`` to download the JSON file.
+
 ## Quickstart ##
 
 The Quickstart shows you how to work with [FcmSharp] in C#.
@@ -39,7 +43,7 @@ namespace FcmSharp.Console
     {
         public static void Main(string[] args)
         {
-            // Read the Credentials from a File, which is not under Version Control:
+            // Read the Service Account Key from a File, which is not under Version Control:
             var settings = FileBasedFcmClientSettings.CreateFromFile("your_app", @"D:\serviceAccountKey.json");
 
             // Construct the Client:
@@ -78,10 +82,6 @@ namespace FcmSharp.Console
     }
 }
 ```
-
-## Creating the JSON Service Account Key ##
-
-Go to the Firebase Console, choose your project. Then in the menu select ``Settings`` and select the Tab ``Service Accounts``. Then scroll down and select ``Generate Private Key`` to download the JSON file.
 
 ## How to do Synchronous API Calls ##
 
