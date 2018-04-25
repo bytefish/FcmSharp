@@ -79,6 +79,10 @@ namespace FcmSharp.Console
 }
 ```
 
+## Creating the JSON Credentials ##
+
+Go to the Firebase Console, choose your project. Then in the menu select ``Settings`` and select the Tab ``Service Accounts``. Then scroll down and select ``Generate Private Key`` to download the JSON file.
+
 ## How to do Synchronous API Calls ##
 
 The ``FcmClient`` only provides an asynchronous API, and a synchronous API won't be added. I know that 
