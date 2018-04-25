@@ -40,7 +40,7 @@ namespace FcmSharp.Console
         public static void Main(string[] args)
         {
             // Read the Credentials from a File, which is not under Version Control:
-            var settings = FileBasedFcmClientSettings.CreateFromFile("your_app", @"D:\credentials.json");
+            var settings = FileBasedFcmClientSettings.CreateFromFile("your_app", @"D:\serviceAccountKey.json");
 
             // Construct the Client:
             using (var client = new FcmClient(settings))
@@ -79,7 +79,7 @@ namespace FcmSharp.Console
 }
 ```
 
-## Creating the JSON Credentials ##
+## Creating the JSON Service Account Key ##
 
 Go to the Firebase Console, choose your project. Then in the menu select ``Settings`` and select the Tab ``Service Accounts``. Then scroll down and select ``Generate Private Key`` to download the JSON file.
 
