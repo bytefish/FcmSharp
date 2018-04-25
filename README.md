@@ -22,7 +22,7 @@ PM> Install-Package FcmSharp
 
 ## Downloading the JSON Service Account Key ##
 
-Go to the Firebase Console, choose your project. Then in the menu select ``Settings`` and select the Tab ``Service Accounts``. Then scroll down and select ``Generate Private Key`` to download the JSON file.
+Go to the Firebase Console and choose your project. Then go to the ``Project Settings`` (by clicking on the Gear Icon next to ``Project Overview``) and select the Tab ``Service Accounts``. Then scroll down and select ``Generate Private Key`` to download the JSON file.
 
 ## Quickstart ##
 
