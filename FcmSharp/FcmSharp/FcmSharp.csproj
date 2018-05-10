@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
+	<TargetFrameworks>net45;net46;netstandard1.3</TargetFrameworks>
 	<Authors>Philipp Wagner</Authors>
 	<Company />
 	<Product />
@@ -12,25 +12,30 @@
 	<PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
 	<Copyright>Copyright © 2018 Philipp Wagner</Copyright>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	<Version>2.1.0</Version>
-	<AssemblyVersion>2.1.0.0</AssemblyVersion>
-	<FileVersion>2.1.0.0</FileVersion>
+	<Version>2.1.1</Version>
+	<AssemblyVersion>2.1.1.0</AssemblyVersion>
+	<FileVersion>2.1.1.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|x64'" />
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+  <ItemGroup>
+    <PackageReference Include="Google.Apis.Auth" Version="1.32.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
 		<Reference Include="System" />
 		<Reference Include="System.Net.Http" />
 		<Reference Include="Microsoft.CSharp" />
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-		
-	</ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+    <PackageReference Include="System.Net.Http" Version="4.3.3" />
+  </ItemGroup>
 
-	<ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-		<Reference Include="System.Net.Http" />
+	<ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+	  <PackageReference Include="System.Net.Http" Version="4.3.3" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -39,10 +44,6 @@
 	  <None Remove="Async\**" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="Google.Apis.Auth" Version="1.32.2" />
-	  <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
-	  <PackageReference Include="System.Net.Http" Version="4.3.2" />
-	</ItemGroup>
+
 
 </Project>
