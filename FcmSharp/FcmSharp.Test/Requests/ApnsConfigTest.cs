@@ -1,17 +1,17 @@
-﻿using System;
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using System.Collections.Generic;
-using System.Text;
 using FcmSharp.Requests;
 using FcmSharp.Serializer;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace FcmSharp.Test.Requests
 {
     [TestFixture]
     public class ApnsConfigTest
     {
-        private static IJsonSerializer serializer = JsonSerializer.Default;
+        private static readonly IJsonSerializer serializer = JsonSerializer.Default;
 
         [Test]
         public void ApnsConfigSerializationTest()

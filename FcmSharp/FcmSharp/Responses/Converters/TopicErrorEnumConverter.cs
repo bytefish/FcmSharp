@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using FcmSharp.Requests;
-using Newtonsoft.Json;
-
-// Copyright (c) Philipp Wagner. All rights reserved.
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using Newtonsoft.Json;
 
 namespace FcmSharp.Responses.Converters
 {
