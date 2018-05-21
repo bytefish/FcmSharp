@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FcmSharp.Example", "FcmSharp.Example\FcmSharp.Example.csproj", "{E5238F02-96AC-4079-9C16-72D169E1C11A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E5238F02-96AC-4079-9C16-72D169E1C11A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5238F02-96AC-4079-9C16-72D169E1C11A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5238F02-96AC-4079-9C16-72D169E1C11A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5238F02-96AC-4079-9C16-72D169E1C11A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {900A25E6-54F4-4714-A7A5-E257B71A032A}
+	EndGlobalSection
+EndGlobal
