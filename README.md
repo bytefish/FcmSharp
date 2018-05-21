@@ -147,8 +147,8 @@ the required credentials.
 
 A warning will be shown, which reminds you to store the key securely. This is imporant, so be sure to never leak the Private Key into the public.
 
-<a href="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/firebase_console_download_key.jpg">
-    <img src="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/firebase_console_download_key.jpg" alt="Download the Private Key" class="mediacenter" />
+<a href="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/firebase_console_download_key.JPG">
+    <img src="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/firebase_console_download_key.JPG" alt="Download the Private Key" class="mediacenter" />
 </a>
 
 I have stored the Private Key to ``D:\serviceAccountKey.json``.
