@@ -6,12 +6,12 @@ using Newtonsoft.Json;
 
 namespace FcmSharp.Requests
 {
-    public class ApnsConfig
+    public class ApnsConfigPayload
     {
-        [JsonProperty("headers")]
-        public Dictionary<string, string> Headers { get; set; }
-        
-        [JsonProperty("payload")]
-        public ApnsConfigPayload Payload { get; set; }
+        [JsonProperty("aps")]
+        public Aps Aps { get; set; }
+
+        [JsonExtensionData]
+        public Dictionary<string, object> CustomData { get; set; }
     }
 }

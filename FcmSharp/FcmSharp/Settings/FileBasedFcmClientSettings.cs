@@ -24,14 +24,14 @@ namespace FcmSharp.Settings
 
             if (!File.Exists(fileName))
             {
-                throw new Exception(string.Format("Could not Read Credentials. (Reason = File Does Not Exist, FileName = '{0}')", fileName));
+                throw new Exception($"Could not Read Credentials. (Reason = File Does Not Exist, FileName = '{fileName}')");
             }
 
             string credentials = File.ReadAllText(fileName);
 
             if (string.IsNullOrWhiteSpace(credentials))
             {
-                throw new Exception(string.Format("Could not Read Credentials. (Reason = File Is Empty, FileName = '{0}')", fileName));
+                throw new Exception($"Could not Read Credentials. (Reason = File Is Empty, FileName = '{fileName}')");
             }
 
             return credentials;
