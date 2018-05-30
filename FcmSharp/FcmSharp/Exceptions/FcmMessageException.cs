@@ -9,12 +9,7 @@ namespace FcmSharp.Exceptions
     public class FcmMessageException : Exception
     {
         public readonly FcmMessageErrorResponse Error;
-
-        public FcmMessageException(FcmMessageErrorResponse error)
-        {
-            Error = error;
-        }
-
+        
         public FcmMessageException(FcmMessageErrorResponse error, string message) 
             : base(message)
         {

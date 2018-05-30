@@ -13,7 +13,7 @@ namespace FcmSharp.Console
         public static void Main(string[] args)
         {
             // Read the Credentials from a File, which is not under Version Control:
-            var settings = FileBasedFcmClientSettings.CreateFromFile("your_app", @"D:\credentials.json");
+            var settings = FileBasedFcmClientSettings.CreateFromFile("your_app", @"D:\serviceAccountKey.json");
 
             // Construct the Client:
             using (var client = new FcmClient(settings))

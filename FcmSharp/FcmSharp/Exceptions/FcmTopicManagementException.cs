@@ -9,13 +9,7 @@ namespace FcmSharp.Exceptions
     public class FcmTopicManagementException : Exception
     {
         public readonly TopicMessageResponseError Error;
-
-        public FcmTopicManagementException(TopicMessageResponseError error)
-        {
-            Error = error;
-        }
-
-
+        
         public FcmTopicManagementException(TopicMessageResponseError error, string message) 
             : base(message)
         {

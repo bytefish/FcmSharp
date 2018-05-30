@@ -82,7 +82,7 @@ namespace FcmSharp
                 var error = serializer.DeserializeObject<FcmMessageErrorResponse>(content);
 
                 // Throw the Exception:
-                throw new FcmMessageException(error);
+                throw new FcmMessageException(error, content);
             }
         }
 
@@ -133,7 +133,7 @@ namespace FcmSharp
                 var error = serializer.DeserializeObject<TopicMessageResponseError>(content);
 
                 // Throw the Exception:
-                throw new FcmTopicManagementException(error);
+                throw new FcmTopicManagementException(error, content);
             }
         }
         
