@@ -138,7 +138,9 @@ namespace FcmSharp.Http.Client
             credential.Initialize(client);
 
             // Execute the Request:
-            var accessToken = await credential.GetAccessTokenForRequestAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+            var accessToken = await credential
+                .GetAccessTokenForRequestAsync(cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
 
             if (accessToken == null)
             {
