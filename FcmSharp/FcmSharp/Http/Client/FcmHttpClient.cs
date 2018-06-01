@@ -68,7 +68,9 @@ namespace FcmSharp.Http.Client
             OnBeforeRequest(httpRequestMessage);
 
             // Invoke the Request:
-            HttpResponseMessage httpResponseMessage = await client.SendAsync(httpRequestMessage, completionOption, cancellationToken).ConfigureAwait(false);
+            HttpResponseMessage httpResponseMessage = await client
+                .SendAsync(httpRequestMessage, completionOption, cancellationToken)
+                .ConfigureAwait(false);
 
             // Invoke actions after the Request:
             OnAfterResponse(httpRequestMessage, httpResponseMessage);
@@ -77,7 +79,9 @@ namespace FcmSharp.Http.Client
             EvaluateResponse(httpResponseMessage);
 
             // Now read the Response Content as String:
-            string httpResponseContentAsString = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+            string httpResponseContentAsString = await httpResponseMessage.Content
+                .ReadAsStringAsync()
+                .ConfigureAwait(false);
 
             // And finally return the Object:
             return serializer.DeserializeObject<TResponseType>(httpResponseContentAsString);
