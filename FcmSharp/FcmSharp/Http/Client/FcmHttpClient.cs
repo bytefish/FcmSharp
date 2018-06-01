@@ -57,7 +57,7 @@ namespace FcmSharp.Http.Client
         public async Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
             // Add Authorization Header:
-            var accessToken = await CreateAccessTokenAsync(cancellationToken);
+            var accessToken = await CreateAccessTokenAsync(cancellationToken).ConfigureAwait(false);
 
             builder.AddHeader("Authorization", $"Bearer {accessToken}");
 
@@ -68,7 +68,7 @@ namespace FcmSharp.Http.Client
             OnBeforeRequest(httpRequestMessage);
 
             // Invoke the Request:
-            HttpResponseMessage httpResponseMessage = await client.SendAsync(httpRequestMessage, completionOption, cancellationToken);
+            HttpResponseMessage httpResponseMessage = await client.SendAsync(httpRequestMessage, completionOption, cancellationToken).ConfigureAwait(false);
 
             // Invoke actions after the Request:
             OnAfterResponse(httpRequestMessage, httpResponseMessage);
@@ -77,7 +77,7 @@ namespace FcmSharp.Http.Client
             EvaluateResponse(httpResponseMessage);
 
             // Now read the Response Content as String:
-            string httpResponseContentAsString = await httpResponseMessage.Content.ReadAsStringAsync();
+            string httpResponseContentAsString = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             // And finally return the Object:
             return serializer.DeserializeObject<TResponseType>(httpResponseContentAsString);
@@ -91,7 +91,7 @@ namespace FcmSharp.Http.Client
         public async Task SendAsync(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
             // Add Authorization Header:
-            var accessToken = await CreateAccessTokenAsync(cancellationToken);
+            var accessToken = await CreateAccessTokenAsync(cancellationToken).ConfigureAwait(false);
 
             builder.AddHeader("Authorization", $"Bearer {accessToken}");
 
@@ -102,7 +102,7 @@ namespace FcmSharp.Http.Client
             OnBeforeRequest(httpRequestMessage);
 
             // Invoke the Request:
-            HttpResponseMessage httpResponseMessage = await client.SendAsync(httpRequestMessage, completionOption, cancellationToken);
+            HttpResponseMessage httpResponseMessage = await client.SendAsync(httpRequestMessage, completionOption, cancellationToken).ConfigureAwait(false);
 
             // Invoke actions after the Request:
             OnAfterResponse(httpRequestMessage, httpResponseMessage);
@@ -138,7 +138,7 @@ namespace FcmSharp.Http.Client
             credential.Initialize(client);
 
             // Execute the Request:
-            var accessToken = await credential.GetAccessTokenForRequestAsync(cancellationToken: cancellationToken);
+            var accessToken = await credential.GetAccessTokenForRequestAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
 
             if (accessToken == null)
             {
