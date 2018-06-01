@@ -68,7 +68,7 @@ namespace FcmSharp
 
             try
             {
-                return await httpClient.SendAsync<FcmMessageResponse>(httpRequestMessageBuilder, cancellationToken);
+                return await httpClient.SendAsync<FcmMessageResponse>(httpRequestMessageBuilder, cancellationToken).ConfigureAwait(false);
             }
             catch (FcmHttpException exception)
             {
@@ -76,7 +76,7 @@ namespace FcmSharp
                 var response = exception.HttpResponseMessage;
 
                 // Read the Content:
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 // Parse the Error:
                 var error = serializer.DeserializeObject<FcmMessageErrorResponse>(content);
@@ -119,7 +119,7 @@ namespace FcmSharp
 
             try
             {
-                return await httpClient.SendAsync<TopicManagementResponse>(httpRequestMessageBuilder, cancellationToken);
+                return await httpClient.SendAsync<TopicManagementResponse>(httpRequestMessageBuilder, cancellationToken).ConfigureAwait(false);
             }
             catch (FcmHttpException exception)
             {
@@ -127,7 +127,7 @@ namespace FcmSharp
                 var response = exception.HttpResponseMessage;
 
                 // Read the Content:
-                var content = await response.Content.ReadAsStringAsync();
+                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 // Parse the Error:
                 var error = serializer.DeserializeObject<TopicMessageResponseError>(content);
