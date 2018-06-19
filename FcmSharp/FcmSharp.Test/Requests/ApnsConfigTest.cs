@@ -22,7 +22,7 @@ namespace FcmSharp.Test.Requests
                 {
                     Aps = new Aps()
                     {
-                        Badge = "badge",
+                        Badge = 1,
                         Alert = new ApsAlert()
                         {
                             TitleLocKey = "title_loc_key",
