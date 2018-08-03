@@ -12,7 +12,7 @@ namespace FcmSharp.Requests
         public Dictionary<string, string> Headers { get; set; }
 
         [JsonProperty("data")]
-        public Dictionary<string, string> Data { get; set; }
+        public object Data { get; set; }
 
         [JsonProperty("notification")]
         public WebpushNotification Notification { get; set; }

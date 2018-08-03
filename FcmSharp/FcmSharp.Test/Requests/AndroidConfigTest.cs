@@ -20,7 +20,7 @@ namespace FcmSharp.Test.Requests
             AndroidConfig config = new AndroidConfig()
             {
                 CollapseKey = "collapse_key",
-                Data = new Dictionary<string, string>() { { "A", "B" } },
+                Data = new {  A = "B" },
                 Priority = AndroidMessagePriorityEnum.HIGH,
                 Notification = new AndroidNotification()
                 {

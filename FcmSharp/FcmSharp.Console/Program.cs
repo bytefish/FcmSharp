@@ -19,10 +19,9 @@ namespace FcmSharp.Console
             using (var client = new FcmClient(settings))
             {
                 // Construct the Data Payload to send:
-                var data = new Dictionary<string, string>()
-                {
-                    {"A", "B"},
-                    {"C", "D"}
+                var data = new {
+                    A = "B",
+                    C = "D"
                 };
 
                 // The Message should be sent to the News Topic:
