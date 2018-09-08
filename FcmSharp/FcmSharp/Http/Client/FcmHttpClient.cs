@@ -20,6 +20,7 @@ namespace FcmSharp.Http.Client
         private readonly ConfigurableHttpClient client;
         private readonly IFcmClientSettings settings;
         private readonly IJsonSerializer serializer;
+        private readonly ServiceAccountCredential credential;
 
         public FcmHttpClient(IFcmClientSettings settings)
             : this(settings, new ConfigurableHttpClient(new ConfigurableMessageHandler(new HttpClientHandler())), JsonSerializer.Default)
@@ -46,9 +47,9 @@ namespace FcmSharp.Http.Client
             this.settings = settings;
             this.client = client;
             this.serializer = serializer;
+            this.credential = CreateServiceAccountCredential(client, settings);
         }
-
-
+        
         public Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, CancellationToken cancellationToken)
         {
             return SendAsync<TResponseType>(builder, default(HttpCompletionOption), cancellationToken);
@@ -95,7 +96,8 @@ namespace FcmSharp.Http.Client
         public async Task SendAsync(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
             // Add Authorization Header:
-            var accessToken = await CreateAccessTokenAsync(cancellationToken).ConfigureAwait(false);
+            var accessToken = await CreateAccessTokenAsync(cancellationToken)
+                .ConfigureAwait(false);
 
             builder.AddHeader("Authorization", $"Bearer {accessToken}");
 
@@ -124,36 +126,6 @@ namespace FcmSharp.Http.Client
         {
         }
 
-        private async Task<string> CreateAccessTokenAsync(CancellationToken cancellationToken)
-        {
-            
-            var credential = GoogleCredential.FromJson(settings.Credentials)    
-                // We need the Messaging Scope:
-                .CreateScoped("https://www.googleapis.com/auth/firebase.messaging")
-                // Cast to the ServiceAccountCredential:
-                .UnderlyingCredential as ServiceAccountCredential;
-            
-            if (credential == null)
-            {
-                throw new Exception("Error creating Access Token for Authorizing Request");
-            }
-
-            // Initialize with the Configurable Client:
-            credential.Initialize(client);
-
-            // Execute the Request:
-            var accessToken = await credential
-                .GetAccessTokenForRequestAsync(cancellationToken: cancellationToken)
-                .ConfigureAwait(false);
-
-            if (accessToken == null)
-            {
-                throw new Exception("Empty Access Token for Authorizing Request");
-            }
-
-            return accessToken;
-        }
-
         public void EvaluateResponse(HttpResponseMessage response)
         {
             if (response == null)
@@ -172,6 +144,39 @@ namespace FcmSharp.Http.Client
             {
                 throw new FcmHttpException(response);
             }
+        }
+
+        private ServiceAccountCredential CreateServiceAccountCredential(ConfigurableHttpClient client, IFcmClientSettings settings)
+        {
+            var serviceAccountCredential = GoogleCredential.FromJson(settings.Credentials)
+                // We need the Messaging Scope:
+                .CreateScoped("https://www.googleapis.com/auth/firebase.messaging")
+                // Cast to the ServiceAccountCredential:
+                .UnderlyingCredential as ServiceAccountCredential;
+
+            if (serviceAccountCredential == null)
+            {
+                throw new Exception($"Error creating ServiceAccountCredential from JSON File {settings.Credentials}");
+            }
+
+            serviceAccountCredential.Initialize(client);
+
+            return serviceAccountCredential;
+        }
+
+        private async Task<string> CreateAccessTokenAsync(CancellationToken cancellationToken)
+        {
+            // Execute the Request:
+            var accessToken = await credential
+                .GetAccessTokenForRequestAsync(cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+
+            if (accessToken == null)
+            {
+                throw new Exception("Failed to obtain Access Token for Request");
+            }
+
+            return accessToken;
         }
 
         public void Dispose()
