@@ -12,6 +12,7 @@ using FcmSharp.Serializer;
 using FcmSharp.Settings;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Http;
+using Google.Apis.Util;
 
 namespace FcmSharp.Http.Client
 {
@@ -48,6 +49,8 @@ namespace FcmSharp.Http.Client
             this.client = client;
             this.serializer = serializer;
             this.credential = CreateServiceAccountCredential(client, settings);
+
+            InitializeExponentialBackOff(client);
         }
         
         public Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, CancellationToken cancellationToken)
@@ -119,7 +122,6 @@ namespace FcmSharp.Http.Client
 
         protected virtual void OnBeforeRequest(HttpRequestMessage httpRequestMessage)
         {
-        
         }
 
         protected virtual void OnAfterResponse(HttpRequestMessage httpRequestMessage, HttpResponseMessage httpResponseMessage)
@@ -160,8 +162,34 @@ namespace FcmSharp.Http.Client
             }
 
             serviceAccountCredential.Initialize(client);
-
+            
             return serviceAccountCredential;
+        }
+
+        private void InitializeExponentialBackOff(ConfigurableHttpClient client)
+        {
+            // The Maximum Number of Retries is limited to 3 per default for a ConfigurableHttpClient. This is 
+            // somewhat weird, because the ExponentialBackOff Algorithm is initialized with 10 Retries per default.
+            // 
+            // Somehow the NumTries seems to be the limiting factor here, so it basically overrides anything you 
+            // are going to write in the Exponential Backoff Handler.
+            client.MessageHandler.NumTries = 20;
+
+            // Create the Default BackOff Algorithm:
+            var backoff = new ExponentialBackOff();
+
+            // Create the Initializer. Make sure to set the Maximum Timespan between two Requests. It 
+            // is 16 Seconds per Default:
+            var backoffInitializer = new BackOffHandler.Initializer(backoff)
+            {
+                MaxTimeSpan = TimeSpan.FromDays(1),
+            };
+
+            // Now create the Handler:
+            var initializer = new ExponentialBackOffInitializer(ExponentialBackOffPolicy.UnsuccessfulResponse503, () => new BackOffHandler(backoffInitializer));
+
+            // And finally append the BackOff Handler, which reacts to 503 Requests:
+            initializer.Initialize(client);
         }
 
         private async Task<string> CreateAccessTokenAsync(CancellationToken cancellationToken)

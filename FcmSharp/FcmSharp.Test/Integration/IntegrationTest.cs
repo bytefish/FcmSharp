@@ -1,15 +1,27 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System.IO;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using FcmSharp.Http.Builder;
+using FcmSharp.Http.Client;
+using FcmSharp.Settings;
+using Google.Apis.Http;
 
 namespace FcmSharp.Test.Integration
 {
+    public static class GlobalState
+    {
+        public static int RequestNumber = 0;
+    }
 
     public class Startup
     {
@@ -27,10 +39,26 @@ namespace FcmSharp.Test.Integration
     /// <summary>
     /// A Controller, which "simulates" the FCM Server. It isn't a beauty, but works.
     /// </summary>
-    public class FcmSampleController : Controller
+    public class RetryableSampleController : Controller
     {
-        public FcmSampleController()
+        public RetryableSampleController()
         {
+        }
+
+        [HttpGet]
+        [Route("return503")]
+        public IActionResult Returns503()
+        {
+            // Request received:
+            GlobalState.RequestNumber = GlobalState.RequestNumber + 1;
+
+            // If this is the 3rd Request, exit:
+            if (GlobalState.RequestNumber % 7 == 0)
+            {
+                return Ok();
+            }
+
+            return StatusCode(503);
         }
     }
 
@@ -54,6 +82,25 @@ namespace FcmSharp.Test.Integration
 
             // And... Ignite!
             host.Start();
+        }
+
+
+
+        [Test]
+        public async Task ExponentialBackoff503Test()
+        {
+            // This needs to be a valid Service Account Credentials File. Can't mock it away:
+            var settings = FileBasedFcmClientSettings.CreateFromFile("project", @"D:\serviceAccountKey.json");
+
+            // Initialize a new FcmHttpClient to send to localhost:
+            var client = new FcmHttpClient(settings);
+
+            // Construct a Fake Message:
+            var builder = new HttpRequestMessageBuilder("http://localhost:8081/return503", HttpMethod.Get);
+
+            CancellationToken longLivingCancellationToken = new CancellationTokenSource(TimeSpan.FromMinutes(30)).Token;
+
+            await client.SendAsync(builder, longLivingCancellationToken);
         }
 
         [TearDown]

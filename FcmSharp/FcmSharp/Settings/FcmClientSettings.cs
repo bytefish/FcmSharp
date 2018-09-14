@@ -12,7 +12,6 @@ namespace FcmSharp.Settings
         public FcmClientSettings(string project, string credentials)
         {
             Project = project;
-
             Credentials = credentials;
         }
     }
