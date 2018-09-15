@@ -50,7 +50,7 @@ namespace FcmSharp.Http.Client
             this.serializer = serializer;
             this.credential = CreateServiceAccountCredential(client, settings);
 
-            InitializeExponentialBackOff(client);
+            InitializeExponentialBackOff(client, settings);
         }
         
         public Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, CancellationToken cancellationToken)
@@ -166,23 +166,23 @@ namespace FcmSharp.Http.Client
             return serviceAccountCredential;
         }
 
-        private void InitializeExponentialBackOff(ConfigurableHttpClient client)
+        private void InitializeExponentialBackOff(ConfigurableHttpClient client, IFcmClientSettings settings)
         {
             // The Maximum Number of Retries is limited to 3 per default for a ConfigurableHttpClient. This is 
             // somewhat weird, because the ExponentialBackOff Algorithm is initialized with 10 Retries per default.
             // 
             // Somehow the NumTries seems to be the limiting factor here, so it basically overrides anything you 
             // are going to write in the Exponential Backoff Handler.
-            client.MessageHandler.NumTries = 20;
+            client.MessageHandler.NumTries = settings.ExponentialBackOffSettings.MaxNumberOfRetries;
 
             // Create the Default BackOff Algorithm:
-            var backoff = new ExponentialBackOff();
+            var backoff = new ExponentialBackOff(settings.ExponentialBackOffSettings.DeltaBackOff, settings.ExponentialBackOffSettings.MaxNumberOfRetries);
 
             // Create the Initializer. Make sure to set the Maximum Timespan between two Requests. It 
             // is 16 Seconds per Default:
             var backoffInitializer = new BackOffHandler.Initializer(backoff)
             {
-                MaxTimeSpan = TimeSpan.FromDays(1),
+                MaxTimeSpan = settings.ExponentialBackOffSettings.MaxTimeSpan
             };
 
             // Now create the Handler:

@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using FcmSharp.BackOff;
 
 namespace FcmSharp.Settings
 {
@@ -13,6 +14,13 @@ namespace FcmSharp.Settings
             var credentials = ReadCredentialsFromFile(credentialsFileName);
 
             return new FcmClientSettings(project, credentials);
+        }
+
+        public static FcmClientSettings CreateFromFile(string project, string credentialsFileName, ExponentialBackOffSettings exponentialBackOffSettings)
+        {
+            var credentials = ReadCredentialsFromFile(credentialsFileName);
+
+            return new FcmClientSettings(project, credentials, exponentialBackOffSettings);
         }
 
         private static string ReadCredentialsFromFile(string fileName)

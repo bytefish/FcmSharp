@@ -11,6 +11,8 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using FcmSharp.BackOff;
+using FcmSharp.Exceptions;
 using FcmSharp.Http.Builder;
 using FcmSharp.Http.Client;
 using FcmSharp.Settings;
@@ -46,14 +48,14 @@ namespace FcmSharp.Test.Integration
         }
 
         [HttpGet]
-        [Route("return503")]
-        public IActionResult Returns503()
+        [Route("return503_UntilRequestFour")]
+        public IActionResult Returns503Until()
         {
             // Request received:
             GlobalState.RequestNumber = GlobalState.RequestNumber + 1;
 
-            // If this is the 3rd Request, exit:
-            if (GlobalState.RequestNumber % 7 == 0)
+            // If this is Request 4, return HTTP Status 200:
+            if (GlobalState.RequestNumber % 4 == 0)
             {
                 return Ok();
             }
@@ -70,6 +72,9 @@ namespace FcmSharp.Test.Integration
         [SetUp]
         public void SetUp()
         {
+            // Reset Global Request Counter:
+            GlobalState.RequestNumber = 0;
+
             // Use Kestrel to Host the Controller:
             var builder = new WebHostBuilder()
                 .UseKestrel()
@@ -83,10 +88,9 @@ namespace FcmSharp.Test.Integration
             // And... Ignite!
             host.Start();
         }
-
-
-
+        
         [Test]
+        [Description("This Test uses the Default Settings and should run for approximately 8 Seconds!")]
         public async Task ExponentialBackoff503Test()
         {
             // This needs to be a valid Service Account Credentials File. Can't mock it away:
@@ -96,12 +100,47 @@ namespace FcmSharp.Test.Integration
             var client = new FcmHttpClient(settings);
 
             // Construct a Fake Message:
-            var builder = new HttpRequestMessageBuilder("http://localhost:8081/return503", HttpMethod.Get);
+            var builder = new HttpRequestMessageBuilder("http://localhost:8081/return503_UntilRequestFour", HttpMethod.Get);
 
-            CancellationToken longLivingCancellationToken = new CancellationTokenSource(TimeSpan.FromMinutes(30)).Token;
+            CancellationToken longLivingCancellationToken = new CancellationTokenSource(TimeSpan.FromMinutes(5)).Token;
 
             await client.SendAsync(builder, longLivingCancellationToken);
         }
+
+        [Test]
+        [Description("This Test configures only 2 Retries for a 503 HTTP Status Code. " +
+                     "It should fail, because the mock endpoint only reports success " +
+                     "after 4 requests to the API.")]
+        public async Task ExponentialBackoff503TooFewRetriesTest()
+        {
+            // Construct new ExponentialBackOffSettings:
+            var exponentialBackOffSettings = new ExponentialBackOffSettings(2, TimeSpan.FromMilliseconds(250), TimeSpan.FromSeconds(30));
+
+            // This needs to be a valid Service Account Credentials File. Can't mock it away:
+            var settings = FileBasedFcmClientSettings.CreateFromFile("project", @"D:\serviceAccountKey.json", exponentialBackOffSettings);
+
+            // Initialize a new FcmHttpClient to send to localhost:
+            var client = new FcmHttpClient(settings);
+
+            // Construct a Fake Message:
+            var builder = new HttpRequestMessageBuilder("http://localhost:8081/return503_UntilRequestFour", HttpMethod.Get);
+
+            CancellationToken longLivingCancellationToken = new CancellationTokenSource(TimeSpan.FromMinutes(5)).Token;
+
+            bool fcmHttpExceptionWasThrown = false;
+
+            try
+            {
+                await client.SendAsync(builder, longLivingCancellationToken);
+            }
+            catch (FcmHttpException)
+            {
+                fcmHttpExceptionWasThrown = true;
+            }
+
+            Assert.IsTrue(fcmHttpExceptionWasThrown);
+        }
+
 
         [TearDown]
         public void TearDown()

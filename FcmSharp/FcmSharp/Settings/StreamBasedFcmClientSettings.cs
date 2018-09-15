@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using FcmSharp.BackOff;
 
 namespace FcmSharp.Settings
 {
@@ -13,6 +14,13 @@ namespace FcmSharp.Settings
             var credentials = ReadCredentialsFromStream(credentialsStream);
 
             return new FcmClientSettings(project, credentials);
+        }
+
+        public static FcmClientSettings CreateFromStream(string project, Stream credentialsStream, ExponentialBackOffSettings exponentialBackOffSettings)
+        {
+            var credentials = ReadCredentialsFromStream(credentialsStream);
+
+            return new FcmClientSettings(project, credentials, exponentialBackOffSettings);
         }
 
         private static string ReadCredentialsFromStream(Stream credentialStream)
