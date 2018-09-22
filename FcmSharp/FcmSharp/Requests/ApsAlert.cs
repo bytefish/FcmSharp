@@ -10,6 +10,9 @@ namespace FcmSharp.Requests
         [JsonProperty("title")]
         public string Title { get; set; }
 
+        [JsonProperty("subtitle")]
+        public string Subtitle { get; set; }
+
         [JsonProperty("body")]
         public string Body { get; set; }
 

@@ -7,6 +7,14 @@ namespace FcmSharp.BackOff
 {
     public class ExponentialBackOffSettings
     {
+        /// <summary>The maximum allowed number of retries (20 Retries).</summary>
+        public static readonly int MaxAllowedNumRetries = 20;
+
+        /// <summary>
+        /// The maximum allowed Delta Backoff (1 Second).
+        /// </summary>
+        public static readonly TimeSpan MaxAllowedDeltaBackOff = TimeSpan.FromSeconds(1);
+
         /// <summary>
         /// The Maximum Number of Retries.  The default value is 10.
         /// </summary>
@@ -28,6 +36,16 @@ namespace FcmSharp.BackOff
 
         public ExponentialBackOffSettings(int maximumNumberRetries, TimeSpan deltaBackOff, TimeSpan maxTimeSpan)
         {
+            if (deltaBackOff < TimeSpan.Zero || deltaBackOff > MaxAllowedDeltaBackOff)
+            {
+                throw new ArgumentOutOfRangeException("deltaBackOff", $"The Delta Backoff TimeSpan must be between 0 and {MaxAllowedDeltaBackOff.TotalSeconds} Seconds.");
+            }
+
+            if (maximumNumberRetries < 0 || maximumNumberRetries > MaxAllowedNumRetries)
+            {
+                throw new ArgumentOutOfRangeException("maximumNumberRetries", $"The Number of Retries must be between 0 and {MaxAllowedNumRetries}");
+            }
+
             MaxNumberOfRetries = maximumNumberRetries;
             DeltaBackOff = deltaBackOff;
             MaxTimeSpan = maxTimeSpan;
