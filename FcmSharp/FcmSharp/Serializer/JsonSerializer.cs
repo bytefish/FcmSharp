@@ -7,9 +7,9 @@ namespace FcmSharp.Serializer
 {
     public class JsonSerializer : IJsonSerializer
     {
-        private JsonSerializerSettings settings;
+        private readonly JsonSerializerSettings settings;
 
-        public JsonSerializer(JsonSerializerSettings settings)
+        private JsonSerializer(JsonSerializerSettings settings)
         {
             this.settings = settings;
         }
