@@ -13,7 +13,7 @@ namespace FcmSharp.Requests
         public ApsAlert Alert { get; set; }
 
         [JsonProperty("badge")]
-        public int Badge { get; set; }
+        public int? Badge { get; set; }
 
         [JsonProperty("sound")]
         public string Sound { get; set; }
