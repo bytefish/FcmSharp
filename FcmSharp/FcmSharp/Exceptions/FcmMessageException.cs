@@ -8,12 +8,18 @@ namespace FcmSharp.Exceptions
 {
     public class FcmMessageException : Exception
     {
-        public readonly FcmMessageErrorResponse Error;
+        public readonly FcmMessageError Error;
+
+        /// <summary>
+        /// The raw body of the error HTTP response
+        /// </summary>
+        public readonly string ResponseBody;
         
-        public FcmMessageException(FcmMessageErrorResponse error, string message) 
+        public FcmMessageException(FcmMessageError error, string responseBody, string message) 
             : base(message)
         {
             Error = error;
+            ResponseBody = responseBody;
         }
     }
 }

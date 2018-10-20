@@ -14,6 +14,8 @@ using FcmSharp.Requests;
 using FcmSharp.Responses;
 using FcmSharp.Serializer;
 using FcmSharp.Settings;
+using Newtonsoft.Json;
+using JsonSerializer = FcmSharp.Serializer.JsonSerializer;
 
 namespace FcmSharp
 {
@@ -53,11 +55,18 @@ namespace FcmSharp
             this.httpClient = httpClient;
         }
 
+        /// <summary>
+        /// Send a message to Firebase
+        /// </summary>
+        /// <returns>If successful, the message</returns>
+        /// <exception cref="FcmMessageException">
+        /// Error response that contains a http status code and an error reason
+        /// </exception>
         public async Task<FcmMessageResponse> SendAsync(FcmMessage message, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (message == null)
             {
-                throw new ArgumentNullException("message");
+                throw new ArgumentNullException(nameof(message));
             }
 
             string url = $"https://fcm.googleapis.com/v1/projects/{settings.Project}/messages:send";
@@ -83,10 +92,10 @@ namespace FcmSharp
                     .ConfigureAwait(false);
 
                 // Parse the Error:
-                var error = serializer.DeserializeObject<FcmMessageErrorResponse>(content);
+                var errorResponse = serializer.DeserializeObject<FcmMessageErrorResponse>(content);
 
                 // Throw the Exception:
-                throw new FcmMessageException(error, content);
+                throw new FcmMessageException(errorResponse.Error, content, content);
             }
         }
 
