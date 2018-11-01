@@ -12,9 +12,12 @@
     <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
     <Copyright>Copyright © 2018 Philipp Wagner</Copyright>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.6.0</Version>
-    <AssemblyVersion>2.6.0.0</AssemblyVersion>
-    <FileVersion>2.6.0.0</FileVersion>
+    <Version>2.7.0</Version>
+    <AssemblyVersion>2.7.0.0</AssemblyVersion>
+    <FileVersion>2.7.0.0</FileVersion>
+    <SignAssembly>true</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <AssemblyOriginatorKeyFile>FcmSharp.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|x64'" />
@@ -45,7 +48,5 @@
     <EmbeddedResource Remove="Async\**" />
     <None Remove="Async\**" />
   </ItemGroup>
-
-
 
 </Project>

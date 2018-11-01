@@ -1,9 +1,15 @@
 # CHANGELOG #
 
-## 2.4.0 ##
+## 2.7.0 ##
 
-* The ``ServiceAccountCredential`` is now cached, see [Issue #28](https://github.com/bytefish/FcmSharp/issues/28). JWT Tokens are now only refreshed, when they are close to expiration.
-* The class ``StreamBasedFcmClientSettings`` has been added by [@janniksam](https://github.com/janniksam).
+* Starting to Strong-Naming assemblies to make it easier for projects to consume the library, where Strong-Naming is a requirement. Thanks to [@DanAvni](https://github.com/DanAvni) for bringing up this question. I decided to go strong-named now, but if this leads to many bugs in other projects, then please let me know. 
+* Like suggested in https://github.com/dotnet/corefx/blob/master/Documentation/project-docs/strong-name-signing.md I am commiting the Private Signing Key to the repository:
+
+> Firstly, we would recommend that these open source projects check-in their private key (remember, strong-names are used for identity, and not for security). 
+
+## 2.6.0 ##
+
+* [Issue #36](https://github.com/bytefish/FcmSharp/issues/36) fixes a bug, where the APNS Payload without a badge always resets the badge to 0. Much thanks to [@sir-boformer](https://github.com/sir-boformer) for the Bugfix!
 
 ## 2.5.0 ##
 
@@ -41,3 +47,8 @@ Please note, that you also need to adjust the ``CancellationToken`` passed into 
 ```
 CancellationToken longLivingCancellationToken = new CancellationTokenSource(TimeSpan.FromMinutes(5)).Token;
 ```
+
+## 2.4.0 ##
+
+* The ``ServiceAccountCredential`` is now cached, see [Issue #28](https://github.com/bytefish/FcmSharp/issues/28). JWT Tokens are now only refreshed, when they are close to expiration.
+* The class ``StreamBasedFcmClientSettings`` has been added by [@janniksam](https://github.com/janniksam).
