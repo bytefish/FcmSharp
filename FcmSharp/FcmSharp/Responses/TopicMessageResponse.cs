@@ -14,7 +14,8 @@ namespace FcmSharp.Responses
             InvalidArgument,
             NotFound,
             Internal,
-            TooManyTopics
+            TooManyTopics,
+            PermissionDenied
         }
         
         public class ResultItem

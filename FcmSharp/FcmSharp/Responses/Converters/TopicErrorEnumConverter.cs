@@ -27,6 +27,8 @@ namespace FcmSharp.Responses.Converters
                     return TopicManagementResponse.Error.Internal;
                 case "TOO_MANY_TOPICS":
                     return TopicManagementResponse.Error.TooManyTopics;
+                case "PERMISSION_DENIED":
+                    return TopicManagementResponse.Error.PermissionDenied;
                 default:
                     return TopicManagementResponse.Error.Unknown;
             }
