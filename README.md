@@ -1,5 +1,7 @@
 # FcmSharp #
 
+[![stable](https://img.shields.io/nuget/v/FcmSharp.svg?label=stable)](https://www.nuget.org/packages/FcmSharp/)
+
 [FcmSharp]: https://github.com/bytefish/FcmSharp
 [Firebase Cloud Messaging HTTP Protocol]: https://firebase.google.com/docs/cloud-messaging/http-server-ref
 
