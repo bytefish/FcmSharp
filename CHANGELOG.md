@@ -1,5 +1,9 @@
 # CHANGELOG #
 
+## 2.7.1 ##
+
+* Add the ``PERMISSION_DENIED`` Error Code. Thanks to [@popelenkow](https://github.com/popelenkow) for the Pull Request.
+
 ## 2.7.0 ##
 
 * Starting to Strong-Naming assemblies to make it easier for projects to consume the library, where Strong-Naming is a requirement. Thanks to [@DanAvni](https://github.com/DanAvni) for bringing up this question. I decided to go strong-named now, but if this leads to many bugs in other projects, then please let me know. 
