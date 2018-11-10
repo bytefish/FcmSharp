@@ -2,7 +2,7 @@
 
 ## 2.7.1 ##
 
-* Add the ``PERMISSION_DENIED`` Error Code. Thanks to [@popelenkow](https://github.com/popelenkow) for the Pull Request.
+* Added the ``PERMISSION_DENIED`` Error Code. Thanks to [@popelenkow](https://github.com/popelenkow) for the Pull Request.
 
 ## 2.7.0 ##
 
