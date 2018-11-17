@@ -28,17 +28,17 @@ namespace FcmSharp.Http.Client
         {
         }
 
-        public FcmHttpClient(IFcmClientSettings settings, HttpClientFactory httpClientFactory)
+        public FcmHttpClient(IFcmClientSettings settings, IHttpClientFactory httpClientFactory)
             : this(settings, JsonSerializer.Default, httpClientFactory, CreateDefaultHttpClientArgs(settings))
         {
         }
 
-        public FcmHttpClient(IFcmClientSettings settings, HttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
+        public FcmHttpClient(IFcmClientSettings settings, IHttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
             : this(settings, JsonSerializer.Default, httpClientFactory, httpClientArgs)
         {
         }
 
-        public FcmHttpClient(IFcmClientSettings settings, IJsonSerializer serializer, HttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
+        public FcmHttpClient(IFcmClientSettings settings, IJsonSerializer serializer, IHttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
         {
             if (settings == null)
             {
@@ -54,7 +54,7 @@ namespace FcmSharp.Http.Client
             this.client = httpClientFactory.CreateHttpClient(httpClientArgs);
             this.serializer = serializer;
             this.credential = CreateServiceAccountCredential(httpClientFactory, settings);
-
+            
             InitializeExponentialBackOff(client, settings);
         }
 
@@ -153,7 +153,7 @@ namespace FcmSharp.Http.Client
             }
         }
 
-        private ServiceAccountCredential CreateServiceAccountCredential(HttpClientFactory httpClientFactory, IFcmClientSettings settings)
+        private ServiceAccountCredential CreateServiceAccountCredential(IHttpClientFactory httpClientFactory, IFcmClientSettings settings)
         {
             var serviceAccountCredential = GoogleCredential.FromJson(settings.Credentials)
                 // We need the Messaging Scope:
