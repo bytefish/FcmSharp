@@ -28,6 +28,16 @@ namespace FcmSharp.Http.Client
         {
         }
 
+        public FcmHttpClient(IFcmClientSettings settings, HttpClientFactory httpClientFactory)
+            : this(settings, JsonSerializer.Default, httpClientFactory, CreateDefaultHttpClientArgs(settings))
+        {
+        }
+
+        public FcmHttpClient(IFcmClientSettings settings, HttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
+            : this(settings, JsonSerializer.Default, httpClientFactory, httpClientArgs)
+        {
+        }
+
         public FcmHttpClient(IFcmClientSettings settings, IJsonSerializer serializer, HttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
         {
             if (settings == null)
@@ -186,6 +196,11 @@ namespace FcmSharp.Http.Client
 
         private static CreateHttpClientArgs CreateDefaultHttpClientArgs(IFcmClientSettings settings)
         {
+            if (settings == null)
+            {
+                throw new ArgumentNullException("settings", "Settings are needed to create the Default HttpClientArgs");
+            }
+
             var args = new CreateHttpClientArgs();
 
             // Create the Default BackOff Algorithm:
