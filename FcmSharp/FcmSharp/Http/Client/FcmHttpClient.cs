@@ -24,35 +24,40 @@ namespace FcmSharp.Http.Client
         private readonly ServiceAccountCredential credential;
 
         public FcmHttpClient(IFcmClientSettings settings)
-            : this(settings, new ConfigurableHttpClient(new ConfigurableMessageHandler(new HttpClientHandler())), JsonSerializer.Default)
+            : this(settings, JsonSerializer.Default, new HttpClientFactory(), CreateDefaultHttpClientArgs(settings))
         {
         }
 
-        public FcmHttpClient(IFcmClientSettings settings, ConfigurableHttpClient client, IJsonSerializer serializer)
+        public FcmHttpClient(IFcmClientSettings settings, IHttpClientFactory httpClientFactory)
+            : this(settings, JsonSerializer.Default, httpClientFactory, CreateDefaultHttpClientArgs(settings))
+        {
+        }
+
+        public FcmHttpClient(IFcmClientSettings settings, IHttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
+            : this(settings, JsonSerializer.Default, httpClientFactory, httpClientArgs)
+        {
+        }
+
+        public FcmHttpClient(IFcmClientSettings settings, IJsonSerializer serializer, IHttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
         {
             if (settings == null)
             {
                 throw new ArgumentNullException("settings");
             }
 
-            if (client == null)
-            {
-                throw new ArgumentNullException("client");
-            }
-
-            if(serializer == null)
+            if (serializer == null)
             {
                 throw new ArgumentNullException("serializer");
             }
 
             this.settings = settings;
-            this.client = client;
+            this.client = httpClientFactory.CreateHttpClient(httpClientArgs);
             this.serializer = serializer;
-            this.credential = CreateServiceAccountCredential(client, settings);
-
+            this.credential = CreateServiceAccountCredential(httpClientFactory, settings);
+            
             InitializeExponentialBackOff(client, settings);
         }
-        
+
         public Task<TResponseType> SendAsync<TResponseType>(HttpRequestMessageBuilder builder, CancellationToken cancellationToken)
         {
             return SendAsync<TResponseType>(builder, default(HttpCompletionOption), cancellationToken);
@@ -67,7 +72,7 @@ namespace FcmSharp.Http.Client
 
             // Build the Request Message:
             var httpRequestMessage = builder.Build();
-            
+
             // Invoke actions before the Request:
             OnBeforeRequest(httpRequestMessage);
 
@@ -106,7 +111,7 @@ namespace FcmSharp.Http.Client
 
             // Build the Request Message:
             var httpRequestMessage = builder.Build();
-            
+
             // Invoke actions before the Request:
             OnBeforeRequest(httpRequestMessage);
 
@@ -148,7 +153,7 @@ namespace FcmSharp.Http.Client
             }
         }
 
-        private ServiceAccountCredential CreateServiceAccountCredential(ConfigurableHttpClient client, IFcmClientSettings settings)
+        private ServiceAccountCredential CreateServiceAccountCredential(IHttpClientFactory httpClientFactory, IFcmClientSettings settings)
         {
             var serviceAccountCredential = GoogleCredential.FromJson(settings.Credentials)
                 // We need the Messaging Scope:
@@ -161,35 +166,17 @@ namespace FcmSharp.Http.Client
                 throw new Exception($"Error creating ServiceAccountCredential from JSON File {settings.Credentials}");
             }
 
-            serviceAccountCredential.Initialize(client);
-            
-            return serviceAccountCredential;
-        }
-
-        private void InitializeExponentialBackOff(ConfigurableHttpClient client, IFcmClientSettings settings)
-        {
-            // The Maximum Number of Retries is limited to 3 per default for a ConfigurableHttpClient. This is 
-            // somewhat weird, because the ExponentialBackOff Algorithm is initialized with 10 Retries per default.
-            // 
-            // Somehow the NumTries seems to be the limiting factor here, so it basically overrides anything you 
-            // are going to write in the Exponential Backoff Handler.
-            client.MessageHandler.NumTries = settings.ExponentialBackOffSettings.MaxNumberOfRetries;
-
-            // Create the Default BackOff Algorithm:
-            var backoff = new ExponentialBackOff(settings.ExponentialBackOffSettings.DeltaBackOff, settings.ExponentialBackOffSettings.MaxNumberOfRetries);
-
-            // Create the Initializer. Make sure to set the Maximum Timespan between two Requests. It 
-            // is 16 Seconds per Default:
-            var backoffInitializer = new BackOffHandler.Initializer(backoff)
+            var initializer = new ServiceAccountCredential.Initializer(serviceAccountCredential.Id, serviceAccountCredential.TokenServerUrl)
             {
-                MaxTimeSpan = settings.ExponentialBackOffSettings.MaxTimeSpan
+                User = serviceAccountCredential.User,
+                AccessMethod = serviceAccountCredential.AccessMethod,
+                Clock = serviceAccountCredential.Clock,
+                Key = serviceAccountCredential.Key,
+                Scopes = serviceAccountCredential.Scopes,
+                HttpClientFactory = httpClientFactory
             };
 
-            // Now create the Handler:
-            var initializer = new ExponentialBackOffInitializer(ExponentialBackOffPolicy.UnsuccessfulResponse503, () => new BackOffHandler(backoffInitializer));
-
-            // And finally append the BackOff Handler, which reacts to 503 Requests:
-            initializer.Initialize(client);
+            return new ServiceAccountCredential(initializer);
         }
 
         private async Task<string> CreateAccessTokenAsync(CancellationToken cancellationToken)
@@ -206,6 +193,40 @@ namespace FcmSharp.Http.Client
 
             return accessToken;
         }
+
+        private static CreateHttpClientArgs CreateDefaultHttpClientArgs(IFcmClientSettings settings)
+        {
+            if (settings == null)
+            {
+                throw new ArgumentNullException("settings", "Settings are needed to create the Default HttpClientArgs");
+            }
+
+            var args = new CreateHttpClientArgs();
+
+            // Create the Default BackOff Algorithm:
+            var backoff = new ExponentialBackOff(settings.ExponentialBackOffSettings.DeltaBackOff, settings.ExponentialBackOffSettings.MaxNumberOfRetries);
+
+            // Create the Initializer. Make sure to set the Maximum Timespan between two Requests. It is 16 Seconds per Default:
+            var backoffInitializer = new BackOffHandler.Initializer(backoff)
+            {
+                MaxTimeSpan = settings.ExponentialBackOffSettings.MaxTimeSpan
+            };
+
+            args.Initializers.Add(new ExponentialBackOffInitializer(ExponentialBackOffPolicy.UnsuccessfulResponse503, () => new BackOffHandler(backoffInitializer)));
+
+            return args;
+        }
+
+        private void InitializeExponentialBackOff(ConfigurableHttpClient client, IFcmClientSettings settings)
+        {
+            // The Maximum Number of Retries is limited to 3 per default for a ConfigurableHttpClient. This is 
+            // somewhat weird, because the ExponentialBackOff Algorithm is initialized with 10 Retries per default.
+            // 
+            // Somehow the NumTries seems to be the limiting factor here, so it basically overrides anything you 
+            // are going to write in the Exponential Backoff Handler.
+            client.MessageHandler.NumTries = settings.ExponentialBackOffSettings.MaxNumberOfRetries;
+        }
+
 
         public void Dispose()
         {

@@ -30,6 +30,12 @@ namespace FcmSharp
         {
         }
 
+        public FcmClient(IFcmClientSettings settings, IFcmHttpClient fcmHttpClient)
+            : this(settings, JsonSerializer.Default, fcmHttpClient)
+        {
+        }
+
+
         public FcmClient(IFcmClientSettings settings, IJsonSerializer serializer)
             : this(settings, serializer, new FcmHttpClient(settings))
         {
