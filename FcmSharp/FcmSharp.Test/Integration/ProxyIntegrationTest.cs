@@ -13,7 +13,7 @@ using FcmSharp.Settings;
 
 namespace FcmSharp.Test.Integration
 {
-    [Explicit("This Test uses Fiddler Proxy to test Proxy Functionality")]
+    [TestFixture]
     public class ProxyIntegrationTest
     {
         /// <summary>
@@ -33,6 +33,7 @@ namespace FcmSharp.Test.Integration
         /// </summary>
         [Test]
         [Description("This Test uses Fiddler to enforce a Proxy and sends a Message using the Proxy settings")]
+        [Ignore("This Test uses Fiddler Proxy to test Proxy Functionality")]
         public void SendFcmMessageUsingProxyTest()
         {
             // This needs to be a valid Service Account Credentials File. Can't mock it away:
