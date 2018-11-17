@@ -16,6 +16,21 @@ namespace FcmSharp.Test.Integration
     [Explicit("This Test uses Fiddler Proxy to test Proxy Functionality")]
     public class ProxyIntegrationTest
     {
+        /// <summary>
+        /// 
+        /// Test Instructions for Windows 10 (https://superuser.com/questions/180480/how-to-simulate-corporate-proxy-server-on-my-development-machine):
+        /// 
+        /// > 1. Download and run Fiddler proxy (it's free). It will automatically set itself as a system proxy in Windows on 
+        /// >    each run. Also click Rules -> Require Proxy Authentication in the top menu if you want to test authentication 
+        /// >    to the proxy (username and password are "1").
+        /// >
+        /// > 2. Open Windows Firewall, then Advanced settings -> Windows Firewall Properties. Block all outbound connections 
+        /// >    for all profiles you need (domain, private, public) and click OK.
+        /// >
+        /// > 3. Add new outbound firewall rule to allow all access for 8888 port (default Fiddler port) or "%LocalAppData%\Programs\Fiddler\Fiddler.exe" app.
+        /// >
+        /// > That's it, only the programs which use your proxy settings (http://1:1@127.0.0.1:8888) will work.
+        /// </summary>
         [Test]
         [Description("This Test uses Fiddler to enforce a Proxy and sends a Message using the Proxy settings")]
         public void SendFcmMessageUsingProxyTest()
@@ -66,6 +81,5 @@ namespace FcmSharp.Test.Integration
                 Console.WriteLine(result);
             }
         }
-
     }
 }
