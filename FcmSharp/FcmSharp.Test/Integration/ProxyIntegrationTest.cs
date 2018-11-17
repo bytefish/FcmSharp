@@ -2,24 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using System.IO;
-using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks;
-using FcmSharp.BackOff;
-using FcmSharp.Exceptions;
-using FcmSharp.Http.Builder;
 using FcmSharp.Http.Client;
 using FcmSharp.Http.Proxy;
+using FcmSharp.Requests;
 using FcmSharp.Settings;
-using Google.Apis.Http;
 
 namespace FcmSharp.Test.Integration
 {
@@ -28,7 +18,7 @@ namespace FcmSharp.Test.Integration
     {
         [Test]
         [Description("This Test uses Fiddler to enforce a Proxy and sends a Message using the Proxy settings")]
-        public void ExponentialBackoff503Test()
+        public void SendFcmMessageUsingProxyTest()
         {
             // This needs to be a valid Service Account Credentials File. Can't mock it away:
             var settings = FileBasedFcmClientSettings.CreateFromFile("your_project_id", @"D:\serviceAccountKey.json");
@@ -43,9 +33,38 @@ namespace FcmSharp.Test.Integration
             var httpClientFactory = new ProxyHttpClientFactory(proxy, credentials);
             
             // Initialize a new FcmHttpClient to send to localhost:
-            var client = new FcmHttpClient(settings, httpClientFactory);
+            var fcmHttpClient = new FcmHttpClient(settings, httpClientFactory);
 
-            
+            // Finally
+            using (var client = new FcmClient(settings, fcmHttpClient))
+            {
+
+                // Construct the Data Payload to send:
+                var data = new Dictionary<string, string>()
+                {
+                    {"A", "B"},
+                    {"C", "D"}
+                };
+
+                // The Message should be sent to the News Topic:
+                var message = new FcmMessage()
+                {
+                    ValidateOnly = false,
+                    Message = new Message
+                    {
+                        Topic = "news",
+                        Data = data
+                    }
+                };
+
+                // Finally send the Message and wait for the Result:
+                CancellationTokenSource cts = new CancellationTokenSource();
+
+                // Send the Message and wait synchronously:
+                var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
+
+                Console.WriteLine(result);
+            }
         }
 
     }
