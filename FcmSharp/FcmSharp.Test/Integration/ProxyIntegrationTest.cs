@@ -51,15 +51,14 @@ namespace FcmSharp.Test.Integration
             // Initialize a new FcmHttpClient to send to localhost:
             var fcmHttpClient = new FcmHttpClient(settings, httpClientFactory);
 
-            // Finally
+            // Construct the Firebase Client:
             using (var client = new FcmClient(settings, fcmHttpClient))
             {
-
-                // Construct the Data Payload to send:
-                var data = new Dictionary<string, string>()
+                // Construct the Notification Payload to send:
+                var notification = new Notification
                 {
-                    {"A", "B"},
-                    {"C", "D"}
+                    Title = "Title Text",
+                    Body = "Notification Body Text"
                 };
 
                 // The Message should be sent to the News Topic:
@@ -69,7 +68,7 @@ namespace FcmSharp.Test.Integration
                     Message = new Message
                     {
                         Topic = "news",
-                        Data = data
+                        Notification = notification
                     }
                 };
 

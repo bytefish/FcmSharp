@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FcmSharp.Test", "FcmSharp.Test\FcmSharp.Test.csproj", "{1303F957-D15D-46F4-B589-9014499F0C36}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FcmSharp.Console", "FcmSharp.Console\FcmSharp.Console.csproj", "{C6F25AD7-4919-4F3F-AD7C-2A2D40C8ABCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FcmSharp.ConsoleApp", "FcmSharp.Console\FcmSharp.ConsoleApp.csproj", "{C6F25AD7-4919-4F3F-AD7C-2A2D40C8ABCB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FcmSharp", "FcmSharp\FcmSharp.csproj", "{8C9F9383-603C-4045-B0FE-D9D04102FB7F}"
 EndProject

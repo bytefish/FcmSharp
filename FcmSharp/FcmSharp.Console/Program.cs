@@ -1,28 +1,27 @@
 ﻿// Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Generic;
+using System;
 using System.Threading;
 using FcmSharp.Requests;
 using FcmSharp.Settings;
 
-namespace FcmSharp.Console
+namespace FcmSharp.ConsoleApp
 {
     public class Program
     {
         public static void Main(string[] args)
         {
             // Read the Credentials from a File, which is not under Version Control:
-            var settings = FileBasedFcmClientSettings.CreateFromFile("your_project_id", @"D:\serviceAccountKey.json");
+            var settings = FileBasedFcmClientSettings.CreateFromFile(@"D:\serviceAccountKey.json");
 
             // Construct the Client:
             using (var client = new FcmClient(settings))
             {
-                // Construct the Data Payload to send:
-                var data = new Dictionary<string, string>()
+                var notification = new Notification()
                 {
-                    {"A", "B"},
-                    {"C", "D"}
+                    Title = "Notification Title",
+                    Body = "Notifcation Body Text"
                 };
 
                 // The Message should be sent to the News Topic:
@@ -32,7 +31,7 @@ namespace FcmSharp.Console
                     Message = new Message
                     {
                         Topic = "news",
-                        Data = data
+                        Notification = notification
                     }
                 };
                 
@@ -43,9 +42,10 @@ namespace FcmSharp.Console
                 var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
 
                 // Print the Result to the Console:
-                System.Console.WriteLine("Message ID = {0}", result.Name);
+                Console.WriteLine("Data Message ID = {0}", result.Name);
 
-                System.Console.ReadLine();
+                Console.WriteLine("Press Enter to exit ...");
+                Console.ReadLine();
             }
         }
     }

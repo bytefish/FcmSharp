@@ -94,7 +94,7 @@ namespace FcmSharp.Test.Integration
         public async Task ExponentialBackoff503Test()
         {
             // This needs to be a valid Service Account Credentials File. Can't mock it away:
-            var settings = FileBasedFcmClientSettings.CreateFromFile("project", @"D:\serviceAccountKey.json");
+            var settings = FileBasedFcmClientSettings.CreateFromFile(@"D:\serviceAccountKey.json");
 
             // Initialize a new FcmHttpClient to send to localhost:
             var client = new FcmHttpClient(settings);
@@ -117,7 +117,7 @@ namespace FcmSharp.Test.Integration
             var exponentialBackOffSettings = new ExponentialBackOffSettings(2, TimeSpan.FromMilliseconds(250), TimeSpan.FromSeconds(30));
 
             // This needs to be a valid Service Account Credentials File. Can't mock it away:
-            var settings = FileBasedFcmClientSettings.CreateFromFile("project", @"D:\serviceAccountKey.json", exponentialBackOffSettings);
+            var settings = FileBasedFcmClientSettings.CreateFromFile(@"D:\serviceAccountKey.json", exponentialBackOffSettings);
 
             // Initialize a new FcmHttpClient to send to localhost:
             var client = new FcmHttpClient(settings);
