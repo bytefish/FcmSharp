@@ -227,6 +227,8 @@ And if we swipe down, we can see the Notification Title and Body, that we have s
 
 ## Advanced ##
 
+###  ###
+
 ### Downloading the JSON Service Account Key ###
 
 Go to the Firebase Console and choose your project. Then go to the ``Project Settings`` (by clicking on the Gear Icon next to ``Project Overview``) 
@@ -234,6 +236,8 @@ and select the Tab ``Service Accounts``. Then scroll down and select ``Generate 
 example in this README for a step-by-step guide.
 
 ### How to use a Proxy Server ###
+
+[FcmSharp] supports using Proxy Servers. The following test shows how to use a Proxy. It uses the ``ProxyHttpClientFactory`` of FcmSharp for creating a proxied ``FcmClient``.
 
 ```csharp
 // Copyright (c) Philipp Wagner. All rights reserved.
