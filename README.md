@@ -79,15 +79,15 @@ namespace FcmSharp.ConsoleApp
 }
 ```
 
-# Complete Example for Sending, Receiving and Displaying a Notification #
+## Complete Example for Sending, Receiving and Displaying a Notification ##
 
-## Setting up the Firebase Project ##
+### Setting up the Firebase Project ###
 
 Please follow the official documentation for creating a Firebase project:
 
 * [https://firebase.google.com/docs/](https://firebase.google.com/docs/)
 
-## Android-side  ##
+### Android-side  ###
 
 [quickstart-android]: https://github.com/firebase/quickstart-android
 [messaging]: https://github.com/firebase/quickstart-android/tree/master/messaging/
@@ -102,7 +102,7 @@ You can use [Android Studio] to open the project and deploy it on your device. I
     <img src="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Examples/Images/Screenshot_20181118-103856.png" alt="Messaging App Started Screenshot" width="50%" />
 </a>
 
-### Adding google-services.json to the Project ###
+#### Adding google-services.json to the Project ####
 
 [Firebase Console]: https://console.firebase.google.com
 
@@ -123,7 +123,7 @@ Then select the **General** Tab and click on the **google-services.json** downlo
 Put it in the ``app`` folder of your project. My ``messaging`` project is located at ``D:\github\quickstart-android\messaging``, 
 so the final link will look like this: ``D:\github\quickstart-android\messaging\app\google-services.json``. 
 
-## FcmSharp-side ##
+### FcmSharp-side ###
 
 I have added an example project for [FcmSharp] to the GitHub repository at:
 
@@ -131,7 +131,7 @@ I have added an example project for [FcmSharp] to the GitHub repository at:
 
 In the example you only need to set the path to the Service Account Key.
 
-### Downloading the Service Account Key ###
+#### Downloading the Service Account Key ####
 
 All messages to the Firebase Cloud Messaging API need to be signed. This requires you to first download the Service Account Key for 
 you project. 
@@ -151,7 +151,7 @@ A warning will be shown, which reminds you to store the key securely. This is im
 
 I have stored the Private Key to ``D:\serviceAccountKey.json``.
 
-### Sending a Notification ###
+#### Sending a Notification ####
 
 Now [FcmSharp] is used to send the Notification to the "news" topic.
 
