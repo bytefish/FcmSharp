@@ -99,7 +99,7 @@ I have prepared an Android project called ``messaging-app`` at [Examples/Android
 You can use [Android Studio] to open the project and deploy it on your device. In the application you can click on the "SUBSCRIBE TO NEWS" Button to subscribe on a Topic called "news", that we will send Notification to:
 
 <a href="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Examples/Images/Screenshot_20181118-103856.png">
-    <img src="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Examples/Images/Screenshot_20181118-103856.png" alt="Messaging App Started Screenshot"/>
+    <img src="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Examples/Images/Screenshot_20181118-103856.png" alt="Messaging App Started Screenshot" width="50%" />
 </a>
 
 ### Adding google-services.json to the Project ###
@@ -140,7 +140,7 @@ Open the **Project Settings** and then go to the **Service Accounts** Tab. On th
 the required credentials.
 
 <a href="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/firebase_console_private_key.jpg">
-    <img src="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/firebase_console_private_key.jpg" alt="Private Key for Message Signing" class="mediacenter" />
+    <img src="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/firebase_console_private_key.jpg" alt="Private Key for Message Signing" />
 </a>
 
 A warning will be shown, which reminds you to store the key securely. This is imporant, so be sure to never leak the Private Key into the public.
@@ -215,13 +215,13 @@ namespace FcmSharp.ConsoleApp
 We can see, that a small Firebase Icon pops up in the Action Bar:
 
 <a href="https://github.com/bytefish/FcmSharp/blob/master/FcmSharp/Examples/Images/Screenshot_20181118-100611.png">
-    <img src="https://github.com/bytefish/FcmSharp/blob/master/FcmSharp/Examples/Images/Screenshot_20181118-100611.png" alt="Messaging App Started Screenshot"/>
+    <img src="https://github.com/bytefish/FcmSharp/blob/master/FcmSharp/Examples/Images/Screenshot_20181118-100611.png" alt="Messaging App Started Screenshot" width="50%" />
 </a>
 
 And if we swipe down, we can see the Notification Title and Body, that we have sent with [FcmSharp]:
 
 <a href="https://github.com/bytefish/FcmSharp/blob/master/FcmSharp/Examples/Images/Screenshot_20181118-100555.png">
-    <img src="https://github.com/bytefish/FcmSharp/blob/master/FcmSharp/Examples/Images/Screenshot_20181118-100555.png" alt="Messaging App Started Screenshot"/>
+    <img src="https://github.com/bytefish/FcmSharp/blob/master/FcmSharp/Examples/Images/Screenshot_20181118-100555.png" alt="Messaging App Started Screenshot" width="50%" />
 </a>
 
 
