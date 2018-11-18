@@ -79,7 +79,7 @@ namespace FcmSharp.ConsoleApp
 }
 ```
 
-## Complete Example for Sending, Receiving and Displaying a Notification ##
+# Complete Example for Sending, Receiving and Displaying a Notification #
 
 ## Setting up the Firebase Project ##
 
