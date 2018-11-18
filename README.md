@@ -96,7 +96,7 @@ Please follow the official documentation for creating a Firebase project:
 
 I have prepared an Android project called ``messaging-app`` at [Examples/Android/messaging-app], that you can use to easily get started with Android Firebase Messaging. It subscribes to a topic, receives incoming Notifications and displays them. It's basically a simplified version of the [quickstart-android] example.
 
-You can use [Android Studio] to open the project and deploy it on your device. In the application you can click on the "SUBSCRIBE TO NEWS" Button to subscribe on a Topic called "news", that we will send Notification to:
+You can use [Android Studio] to open the project and deploy it on your device. In the application you can click on the "SUBSCRIBE TO NEWS" Button to subscribe on a Topic called "news", that we will send a notification to:
 
 <a href="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Examples/Images/Screenshot_20181118-103856.png">
     <img src="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Examples/Images/Screenshot_20181118-103856.png" alt="Messaging App Started Screenshot" width="50%" />
