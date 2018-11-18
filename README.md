@@ -22,42 +22,33 @@ in the [Package Manager Console](http://docs.nuget.org/consume/package-manager-c
 PM> Install-Package FcmSharp
 ```
 
-## Downloading the JSON Service Account Key ##
-
-Go to the Firebase Console and choose your project. Then go to the ``Project Settings`` (by clicking on the Gear Icon next to ``Project Overview``) 
-and select the Tab ``Service Accounts``. Then scroll down and select ``Generate Private Key`` to download the JSON file. Please see the complete 
-example in this README for a step-by-step guide.
-
-## Quickstart ##
-
-The Quickstart shows you how to work with [FcmSharp] in C#.
+## Quickstart: Sending Notifications ##
 
 ```csharp
 // Copyright (c) Philipp Wagner. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Generic;
+using System;
 using System.Threading;
 using FcmSharp.Requests;
 using FcmSharp.Settings;
 
-namespace FcmSharp.Console
+namespace FcmSharp.ConsoleApp
 {
-    internal class Program
+    public class Program
     {
         public static void Main(string[] args)
         {
-            // Read the Service Account Key from a File, which is not under Version Control:
-            var settings = FileBasedFcmClientSettings.CreateFromFile("your_app", @"D:\serviceAccountKey.json");
+            // Read the Credentials from a File, which is not under Version Control:
+            var settings = FileBasedFcmClientSettings.CreateFromFile(@"D:\serviceAccountKey.json");
 
             // Construct the Client:
             using (var client = new FcmClient(settings))
             {
-                // Construct the Data Payload to send:
-                var data = new Dictionary<string, string>()
+                var notification = new Notification
                 {
-                    {"A", "B"},
-                    {"C", "D"}
+                    Title = "Notification Title",
+                    Body = "Notifcation Body Text"
                 };
 
                 // The Message should be sent to the News Topic:
@@ -67,7 +58,7 @@ namespace FcmSharp.Console
                     Message = new Message
                     {
                         Topic = "news",
-                        Data = data
+                        Notification = notification
                     }
                 };
                 
@@ -78,17 +69,21 @@ namespace FcmSharp.Console
                 var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
 
                 // Print the Result to the Console:
-                System.Console.WriteLine("Message ID = {0}", result.Name);
+                Console.WriteLine("Data Message ID = {0}", result.Name);
 
-                System.Console.ReadLine();
+                Console.WriteLine("Press Enter to exit ...");
+                Console.ReadLine();
             }
         }
     }
 }
 ```
-## Getting Started: Complete Example ##
 
-In this tutorial I assume you have followed the official documentation to create a Firebase project:
+## Complete Example for Sending, Receiving and Displaying a Notification ##
+
+## Setting up the Firebase Project ##
+
+Please follow the official documentation for creating a Firebase project:
 
 * [https://firebase.google.com/docs/](https://firebase.google.com/docs/)
 
@@ -96,24 +91,27 @@ In this tutorial I assume you have followed the official documentation to create
 
 [quickstart-android]: https://github.com/firebase/quickstart-android
 [messaging]: https://github.com/firebase/quickstart-android/tree/master/messaging/
+[Android Studio]: https://developer.android.com/studio
+[Examples/Android/messaging-app]: https://github.com/bytefish/FcmSharp/tree/master/FcmSharp/Examples/Android/messaging-app
 
-The Firebase repositories on GitHub provide great quickstart examples for almost all use cases. For this tutorial 
-we are going to use their Firebase Cloud Messaging Quickstart example, which is located at:
+I have prepared an Android project called ``messaging-app`` at [Examples/Android/messaging-app], that you can use to easily get started with Android Firebase Messaging. It subscribes to a topic, receives incoming Notifications and displays them. It's basically a simplified version of the [quickstart-android] example.
 
-* [https://github.com/firebase/quickstart-android/tree/master/messaging/](https://github.com/firebase/quickstart-android/tree/master/messaging/)
+You can use [Android Studio] to open the project and deploy it on your device. In the application you can click on the "SUBSCRIBE TO NEWS" Button to subscribe on a Topic called "news", that we will send Notification to:
 
-I simply cloned the entire [quickstart-android] repository and opened the [messaging] project.
+<a href="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Examples/Images/Screenshot_20181118-103856.png">
+    <img src="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Examples/Images/Screenshot_20181118-103856.png" alt="Messaging App Started Screenshot"/>
+</a>
 
 ### Adding google-services.json to the Project ###
 
 [Firebase Console]: https://console.firebase.google.com
 
-The only step, that's left to be done on the Android-side is to download the ``google-services.json`` file and add it to the project.
+The only thing, that needs to be done on the Android-side is downloading the ``google-services.json`` file and adding it to the project.
 
 You start by opening the [Firebase Console] and going to the **Project Settings** of your project:
 
 <a href="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/firebase_console_project_settings.jpg">
-    <img src="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/firebase_console_project_settings.jpg" alt="Firebase Project Settings" class="mediacenter" />
+    <img src="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/firebase_console_project_settings.jpg" alt="Firebase Project Settings"/>
 </a>
 
 Then select the **General** Tab and click on the **google-services.json** download link:
@@ -122,16 +120,16 @@ Then select the **General** Tab and click on the **google-services.json** downlo
     <img src="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/firebase_console_download_google_services_json.jpg" alt="Projects google-services.json" class="mediacenter" />
 </a>
 
-And put it in the ``app`` folder of your project. My ``messaging`` project is located at ``D:\github\quickstart-android\messaging``, 
+Put it in the ``app`` folder of your project. My ``messaging`` project is located at ``D:\github\quickstart-android\messaging``, 
 so the final link will look like this: ``D:\github\quickstart-android\messaging\app\google-services.json``. 
 
-### Additional Android Resources ###
-
-If you still have problems adding Firebase to your Android application, then please consult the official Firebase documentation at:
-
-* [https://firebase.google.com/docs/android/setup](https://firebase.google.com/docs/android/setup)
-
 ## FcmSharp-side ##
+
+I have added an example project for [FcmSharp] to the GitHub repository at:
+
+* [https://github.com/bytefish/FcmSharp/tree/master/FcmSharp/Examples](https://github.com/bytefish/FcmSharp/tree/master/FcmSharp/Examples)
+
+In the example you only need to set the path to the Service Account Key.
 
 ### Downloading the Service Account Key ###
 
@@ -153,69 +151,87 @@ A warning will be shown, which reminds you to store the key securely. This is im
 
 I have stored the Private Key to ``D:\serviceAccountKey.json``.
 
-### Preparing the FcmSharp.Example project ###
+### Sending a Notification ###
 
-I have added an example project for [FcmSharp] to its GitHub repository at:
-
-* [https://github.com/bytefish/FcmSharp/tree/master/FcmSharp/Examples](https://github.com/bytefish/FcmSharp/tree/master/FcmSharp/Examples)
-
-In the example you need to set your Projects ID, when creating the FcmSharp Settings. To find out your Project ID, in the [Firebase Console] 
-select the **Project Settings** and copy the Project ID in the **General** Tab. Then in the sample replace ``your_project_id`` with your 
-Firebase Project ID.
+Now [FcmSharp] is used to send the Notification to the "news" topic.
 
 ```csharp
-// Read the Credentials from a File, which is not under Version Control:
-var settings = FileBasedFcmClientSettings.CreateFromFile(@"your_project_id", @"D:\serviceAccountKey.json");
+// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Threading;
+using FcmSharp.Requests;
+using FcmSharp.Settings;
+
+namespace FcmSharp.ConsoleApp
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            // Read the Credentials from a File, which is not under Version Control:
+            var settings = FileBasedFcmClientSettings.CreateFromFile(@"D:\serviceAccountKey.json");
+
+            // Construct the Client:
+            using (var client = new FcmClient(settings))
+            {
+                var notification = new Notification
+                {
+                    Title = "Notification Title",
+                    Body = "Notifcation Body Text"
+                };
+
+                // The Message should be sent to the News Topic:
+                var message = new FcmMessage()
+                {
+                    ValidateOnly = false,
+                    Message = new Message
+                    {
+                        Topic = "news",
+                        Notification = notification
+                    }
+                };
+                
+                // Finally send the Message and wait for the Result:
+                CancellationTokenSource cts = new CancellationTokenSource();
+
+                // Send the Message and wait synchronously:
+                var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
+
+                // Print the Result to the Console:
+                Console.WriteLine("Data Message ID = {0}", result.Name);
+
+                Console.WriteLine("Press Enter to exit ...");
+                Console.ReadLine();
+            }
+        }
+    }
+}
 ```
 
-We are done with the FcmSharp-side!
+### Android Result ###
 
-## Sending the Message ##
+We can see, that a small Firebase Icon pops up in the Action Bar:
 
-### Getting the Device InstanceID Token ###
-
-In the ``MainActivity.java`` of the Android project I set a breakpoint, where the Instance ID Token is obtained. You can also do it 
-without a breakpoint and search the Logs for the InstanceID message:
-
-<a href="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/android_instance_id_token.jpg">
-    <img src="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/android_instance_id_token.jpg" alt="Getting the Instance ID Token" class="mediacenter" />
+<a href="https://github.com/bytefish/FcmSharp/blob/master/FcmSharp/Examples/Images/Screenshot_20181118-100611.png">
+    <img src="https://github.com/bytefish/FcmSharp/blob/master/FcmSharp/Examples/Images/Screenshot_20181118-100611.png" alt="Messaging App Started Screenshot"/>
 </a>
 
-Once you click on the **LOG TOKEN** Button in the sample application, the breakpoint will be hit and you can easily 
-copy the ``token`` from the Variables pane.
+And if we swipe down, we can see the Notification Title and Body, that we have sent with [FcmSharp]:
 
-### Using FcmSharp to send a message to the Device ###
-
-Now start the ``FcmSharp.Example`` project. A Console will open and prompt you to enter the Device Token. It is the 
-Device Token we have just obtained from the Android application:
-
-<a href="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/fcmsharp_example_console.jpg">
-    <img src="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/fcmsharp_example_console.jpg" alt="Sending the message with FcmSharp" class="mediacenter" />
-</a>
-
-Before hitting Enter, make sure to set a Breakpoint in the ``onMessageReceived`` handler of the ``MyFirebaseMessagingService.java`` class.
-
-### Receiving the Message in the Android Application ###
-
-So after you have set the Breakpoint in the ``MyFirebaseMessagingService.java``, hit enter in the ``FcmSharp.Example`` console  and you should 
-receive the message in your Android application:
-
-<a href="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/android_remote_message_received.jpg">
-    <img src="https://github.com/bytefish/bytefish.de/raw/master/images/blog/fcmsharp_getting_started/android_remote_message_received.jpg" alt="Receiving the Message in Android" class="mediacenter" />
+<a href="https://github.com/bytefish/FcmSharp/blob/master/FcmSharp/Examples/Images/Screenshot_20181118-100555.png">
+    <img src="https://github.com/bytefish/FcmSharp/blob/master/FcmSharp/Examples/Images/Screenshot_20181118-100555.png" alt="Messaging App Started Screenshot"/>
 </a>
 
 
 ## Advanced ##
 
-### How to do Synchronous API Calls ###
+### Downloading the JSON Service Account Key ###
 
-The ``FcmClient`` only provides an asynchronous API, and a synchronous API won't be added. I know that 
-asynchronous programming can be very challenging for beginners, so here is how you can turn an async 
-call into a synchronous one:
-
-```csharp
-var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
-```
+Go to the Firebase Console and choose your project. Then go to the ``Project Settings`` (by clicking on the Gear Icon next to ``Project Overview``) 
+and select the Tab ``Service Accounts``. Then scroll down and select ``Generate Private Key`` to download the JSON file. Please see the complete 
+example in this README for a step-by-step guide.
 
 ### How to use a Proxy Server ###
 
@@ -305,4 +321,14 @@ namespace FcmSharp.Test.Integration
         }
     }
 }
+```
+
+### How to do Synchronous API Calls ###
+
+The ``FcmClient`` only provides an asynchronous API, and a synchronous API won't be added. I know that 
+asynchronous programming can be very challenging for beginners, so here is how you can turn an async 
+call into a synchronous one:
+
+```csharp
+var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
 ```

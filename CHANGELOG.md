@@ -1,5 +1,9 @@
 # CHANGELOG #
 
+## 2.8.1 ##
+
+* Added a Method ``FcmClientSettings CreateFromFile(string credentialsFileName)`` to the ``FileBasedFcmClientSettings`` class. This method automatically reads the Project ID from the Service Account Key, making it unecessary to explicitly pass it in code.
+
 ## 2.8.0 ##
 
 [Issue #44](https://github.com/bytefish/FcmSharp/issues/44) fixed the Proxy usage in FcmSharp. Thanks a lot to [@kdlslyv](https://github.com/kdlslyv) for bringing up the issue! The Google API previously did not use the Proxy Settings provided by the user for the Token Refreshs. I have added a ``ProxyHttpClientFactory`` to the library to simplify the creation of proxied ``HttpClient`` instances.
