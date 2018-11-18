@@ -224,7 +224,6 @@ And if we swipe down, we can see the Notification Title and Body, that we have s
     <img src="https://github.com/bytefish/FcmSharp/blob/master/FcmSharp/Examples/Images/Screenshot_20181118-100555.png" alt="Messaging App Started Screenshot" width="50%" />
 </a>
 
-
 ## Advanced ##
 
 ###  ###
@@ -336,3 +335,12 @@ call into a synchronous one:
 ```csharp
 var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
 ```
+
+
+## Thanks ##
+
+[OVSoftware]: http://www.ovsoftware.com
+[JetBrains]: https://jetbrains.com
+[ReSharper]: https://www.jetbrains.com/resharper/
+
+I want to thank all contributors of this project for helping to create a great library, my employer [OVSoftware] for allowing me to work on my side-projects and [JetBrains] for donating me a [ReSharper] license for this project.
