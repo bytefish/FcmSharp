@@ -18,7 +18,7 @@ namespace FcmSharp.ConsoleApp
             // Construct the Client:
             using (var client = new FcmClient(settings))
             {
-                var notification = new Notification()
+                var notification = new Notification
                 {
                     Title = "Notification Title",
                     Body = "Notifcation Body Text"
