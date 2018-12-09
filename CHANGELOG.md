@@ -1,5 +1,9 @@
 # CHANGELOG #
 
+## 2.8.2 ##
+
+* Added the ``channel_id`` property to the ``AndroidNotification``. Thanks to [@kehollin](https://github.com/kehollin) for bringing up the issue!
+
 ## 2.8.1 ##
 
 * Added a Method ``FcmClientSettings CreateFromFile(string credentialsFileName)`` to the ``FileBasedFcmClientSettings`` class. This method automatically reads the Project ID from the Service Account Key, making it unecessary to explicitly pass it in code.
