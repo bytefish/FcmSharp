@@ -39,5 +39,8 @@ namespace FcmSharp.Requests
 
         [JsonProperty("title_loc_args")]
         public string[] TitleLocArgs { get; set; }
+
+        [JsonProperty("channel_id")]
+        public string ChannelId { get; set; }
     }
 }
