@@ -48,7 +48,7 @@ namespace FcmSharp.ConsoleApp
                 var notification = new Notification
                 {
                     Title = "Notification Title",
-                    Body = "Notifcation Body Text"
+                    Body = "Notification Body Text"
                 };
 
                 // The Message should be sent to the News Topic:
