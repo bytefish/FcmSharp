@@ -348,7 +348,7 @@ var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
         <img src="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Images/OV_Logo.png" height="94">
     </a>
     <a href="https://www.jetbrains.com/">
-        <img src="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Images/jetbrains.png" height="94" width="94">
+        <img src="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Images/jetbrains.svg" height="94" width="94">
     </a>
 </p>
 
