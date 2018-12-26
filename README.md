@@ -343,4 +343,14 @@ var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
 [JetBrains]: https://jetbrains.com
 [ReSharper]: https://www.jetbrains.com/resharper/
 
+<p>
+    <a href="https://www.ovsoftware.com">
+        <img src="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Images/OV_Logo.png" height="94">
+    </a>
+    <a href="https://www.jetbrains.com/">
+        <img src="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Images/jetbrains.png" height="94" width="94">
+    </a>
+</p>
+
 I want to thank all contributors of this project for helping to create a great library, my employer [OVSoftware] for allowing me to work on my side-projects and [JetBrains] for donating me a [ReSharper] license for this project.
+
