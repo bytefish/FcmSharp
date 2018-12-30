@@ -16,5 +16,8 @@ namespace FcmSharp.Requests
 
         [JsonProperty("notification")]
         public WebpushNotification Notification { get; set; }
+
+        [JsonProperty("fcm_options")]
+        public WebpushFcmOptions FcmOptions { get; set; }
     }
 }
