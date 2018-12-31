@@ -1,5 +1,9 @@
 # CHANGELOG #
 
+## 2.8.3 ##
+
+* The ``fcm_options`` property has been added to the ``WebpushConfig`` in [Pull Request #51](https://github.com/bytefish/FcmSharp/pull/51). Thanks to [@Dinokin](https://github.com/Dinokin) for the Pull Request!
+
 ## 2.8.2 ##
 
 * Added the ``channel_id`` property to the ``AndroidNotification``. Thanks to [@kehollin](https://github.com/kehollin) for bringing up the issue!
