@@ -339,12 +339,12 @@ var result = client.SendAsync(message, cts.Token).GetAwaiter().GetResult();
 
 ## Thanks ##
 
-[OVSoftware]: http://www.ovsoftware.com
+[OVSoftware]: http://www.ovsoftware.de
 [JetBrains]: https://jetbrains.com
 [ReSharper]: https://www.jetbrains.com/resharper/
 
 <p>
-    <a href="https://www.ovsoftware.com">
+    <a href="https://ovsoftware.de">
         <img src="https://raw.githubusercontent.com/bytefish/FcmSharp/master/FcmSharp/Images/OV_Logo.png" height="94">
     </a>
     <a href="https://www.jetbrains.com/">
