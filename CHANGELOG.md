@@ -1,5 +1,9 @@
 # CHANGELOG #
 
+## 2.8.4 ##
+
+* Merged [Pull Request #53](https://github.com/bytefish/FcmSharp/pull/53), which fixed the deserialization in the ``BoolToIntConverter``. Thanks to [@vivan000](https://github.com/vivan000) for the Pull Request!
+
 ## 2.8.3 ##
 
 * The ``fcm_options`` property has been added to the ``WebpushConfig`` in [Pull Request #51](https://github.com/bytefish/FcmSharp/pull/51). Thanks to [@Dinokin](https://github.com/Dinokin) for the Pull Request!
