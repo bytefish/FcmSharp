@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FcmSharp.Scheduler.Quartz.Services
 {
-    public interface IMessagingService :IDisposable
+    public interface IMessagingService : IDisposable
     {
         Task SendScheduledMessageAsync(int messageId, CancellationToken cancellationToken);
     }

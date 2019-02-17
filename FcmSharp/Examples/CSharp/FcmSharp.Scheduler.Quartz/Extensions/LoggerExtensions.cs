@@ -26,10 +26,12 @@ namespace FcmSharp.Scheduler.Quartz.Extensions
         {
             return logger.IsEnabled(LogLevel.Information);
         }
+
         public static bool IsTraceEnabled<TLoggerType>(this ILogger<TLoggerType> logger)
         {
             return logger.IsEnabled(LogLevel.Trace);
         }
+
         public static bool IsWarningEnabled<TLoggerType>(this ILogger<TLoggerType> logger)
         {
             return logger.IsEnabled(LogLevel.Warning);
