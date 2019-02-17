@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FcmSharp.Requests;
-using FcmSharp.Responses;
 using FcmSharp.Scheduler.Database;
 using FcmSharp.Scheduler.Services;
-using FcmSharp.Scheduler.Testing;
 using FcmSharp.Settings;
 
 namespace FcmSharp.Scheduler
 {
     class Program
     {
-        private static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan PollingInterval = TimeSpan.FromMinutes(1);
 
         static async Task Main(string[] args)
         {
             var cancellationToken = CancellationToken.None;
 
+            // Initializes the Database:
             await CreateDatabase(cancellationToken);
 
+            // Starts the Scheduling Loop for Message Scheduling:
             await ProcessMessages(cancellationToken);
         }
 

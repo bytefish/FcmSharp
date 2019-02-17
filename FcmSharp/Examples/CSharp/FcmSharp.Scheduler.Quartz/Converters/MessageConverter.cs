@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using FcmSharp.Requests;
-using SourceType = FcmSharp.Scheduler.Database.Model.Message;
+﻿using FcmSharp.Requests;
+using SourceType = FcmSharp.Scheduler.Quartz.Database.Model.Message;
 using TargetType = FcmSharp.Requests.FcmMessage;
 
-namespace FcmSharp.Scheduler.Converters
+namespace FcmSharp.Scheduler.Quartz.Converters
 {
     public static class MessageConverter
     {

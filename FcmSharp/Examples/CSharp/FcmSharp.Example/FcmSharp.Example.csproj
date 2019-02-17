@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FcmSharp" Version="2.1.1" />
+    <PackageReference Include="FcmSharp" Version="2.8.4" />
   </ItemGroup>
 
 </Project>
