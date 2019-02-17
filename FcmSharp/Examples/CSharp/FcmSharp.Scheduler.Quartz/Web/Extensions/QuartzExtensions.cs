@@ -1,6 +1,9 @@
 ﻿using FcmSharp.Scheduler.Quartz.Quartz.JobFactory;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;

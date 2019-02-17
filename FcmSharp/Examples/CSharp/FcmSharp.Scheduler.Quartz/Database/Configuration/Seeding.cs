@@ -1,6 +1,6 @@
-﻿using System;
-using FcmSharp.Scheduler.Quartz.Database.Model;
-using Microsoft.AspNetCore.Identity;
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
 using Microsoft.EntityFrameworkCore;
 
 namespace FcmSharp.Scheduler.Quartz.Database.Configuration

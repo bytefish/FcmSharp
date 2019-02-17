@@ -1,4 +1,7 @@
-﻿using FcmSharp.Scheduler.Quartz.Database.Configuration;
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using FcmSharp.Scheduler.Quartz.Database.Configuration;
 using FcmSharp.Scheduler.Quartz.Database.Model;
 using Microsoft.EntityFrameworkCore;
 

@@ -11,11 +11,11 @@ namespace FcmSharp.Scheduler.Quartz.Quartz.Jobs
     {
         public static readonly string JobDataKey = "MESSAGE_ID";
 
-        private readonly IMessagingService _messagingService;
+        private readonly IMessagingService messagingService;
 
         public ProcessMessageJob(IMessagingService messagingService)
         {
-            this._messagingService = messagingService;
+            this.messagingService = messagingService;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -23,7 +23,7 @@ namespace FcmSharp.Scheduler.Quartz.Quartz.Jobs
             var cancellationToken = context.CancellationToken;
             var messageId = GetMessageId(context);
 
-            await _messagingService.SendScheduledMessageAsync(messageId, cancellationToken);
+            await messagingService.SendScheduledMessageAsync(messageId, cancellationToken);
         }
 
         private int GetMessageId(IJobExecutionContext context)

@@ -1,13 +1,14 @@
-﻿using FcmSharp.Scheduler.Quartz.Quartz.Jobs;
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using FcmSharp.Scheduler.Quartz.Quartz.Jobs;
 using FcmSharp.Scheduler.Quartz.Services;
 using FcmSharp.Scheduler.Quartz.Testing;
 using FcmSharp.Scheduler.Quartz.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Quartz;
 
 namespace FcmSharp.Scheduler.Quartz
 {
@@ -54,9 +55,8 @@ namespace FcmSharp.Scheduler.Quartz
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseDeveloperExceptionPage()
+            app.EnsureDatabaseCreated()
                .UseCors("Everything")
-               .EnsureDatabaseCreated()
                .UseStaticFiles()
                .UseQuartz()
                .UseMvc();

@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using FcmSharp.Scheduler.Quartz.Converters;
 using FcmSharp.Scheduler.Quartz.Database;
 using FcmSharp.Scheduler.Quartz.Database.Model;
 using FcmSharp.Scheduler.Quartz.Extensions;
+using FcmSharp.Scheduler.Quartz.Services.Converters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

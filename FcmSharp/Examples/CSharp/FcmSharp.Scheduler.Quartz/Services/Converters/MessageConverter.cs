@@ -1,8 +1,11 @@
-﻿using FcmSharp.Requests;
+﻿// Copyright (c) Philipp Wagner. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using FcmSharp.Requests;
 using SourceType = FcmSharp.Scheduler.Quartz.Database.Model.Message;
 using TargetType = FcmSharp.Requests.FcmMessage;
 
-namespace FcmSharp.Scheduler.Quartz.Converters
+namespace FcmSharp.Scheduler.Quartz.Services.Converters
 {
     public static class MessageConverter
     {
@@ -27,6 +30,5 @@ namespace FcmSharp.Scheduler.Quartz.Converters
                 }
             };
         }
-
     }
 }
