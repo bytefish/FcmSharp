@@ -10,8 +10,15 @@ namespace FcmSharp.Requests
 {
     public class AndroidConfig
     {
-        [JsonProperty("collapse_key")]
+        [JsonProperty("collapseKey")]
         public string CollapseKey { get; set; }
+
+        [JsonProperty("collapse_key")]
+        public string CollapseKeyLegacy
+        {
+            get { return CollapseKey; }
+            set { CollapseKey = value; }
+        }
 
         [JsonProperty("priority")]
         [JsonConverter(typeof(AndroidMessagePriorityEnumConverter))]
