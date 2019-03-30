@@ -22,6 +22,16 @@ in the [Package Manager Console](http://docs.nuget.org/consume/package-manager-c
 PM> Install-Package FcmSharp
 ```
 
+## On Disposing the FcmClient ##
+
+[Simon Timms]: https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
+
+You should reuse the ``FcmClient``, instead of disposing it for each request. Internally the ``FcmClient`` uses the 
+``HttpClient``, which could lead to Socket Exhaustion. Please read this great post by [Simon Timms] to understand the 
+details of this behavior in .NET. 
+
+The ``FcmClient`` only uses thread-safe operations, so it is safe to be shared between threads.
+
 ## Quickstart: Sending Notifications ##
 
 ```csharp
