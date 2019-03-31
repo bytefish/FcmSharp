@@ -25,9 +25,10 @@ PM> Install-Package FcmSharp
 ## On Disposing the FcmClient ##
 
 [Simon Timms]: https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
+[this great post]: https://aspnetmonsters.com/2016/08/2016-08-27-httpclientwrong/
 
 You should reuse the ``FcmClient``, instead of disposing it for each request. Internally the ``FcmClient`` uses the 
-``HttpClient``, which shouldn't be disposed for every request. Please read this great post by [Simon Timms] to understand the 
+``HttpClient``, which shouldn't be disposed for every request. Please read [this great post] by [Simon Timms] to understand the 
 details of this behavior in .NET. 
 
 The ``FcmClient`` only uses thread-safe operations, so it is safe to be shared between threads.
