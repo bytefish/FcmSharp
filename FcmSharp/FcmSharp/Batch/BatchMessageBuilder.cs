@@ -30,6 +30,13 @@ namespace FcmSharp.Batch
         public IDictionary<string, string> Headers { get; set; }
     }
 
+    /// <summary>
+    /// This Builder for Batch Messages is the implementation of the FCM Node SDK:
+    /// 
+    ///     https://github.com/firebase/firebase-admin-node/blob/bf3dbd117ffc3c895a150eee2169eb7c02f4f4cc/src/messaging/batch-request.ts
+    ///
+    /// All Credit for the implementation goes to the original authors.
+    /// </summary>
     public class BatchMessageBuilder
     {
         private const string PART_BOUNDARY = "__END_OF_PART__";
