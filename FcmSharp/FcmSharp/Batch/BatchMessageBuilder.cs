@@ -6,15 +6,26 @@ using System.Text;
 using System.Threading.Tasks;
 using FcmSharp.Http.Builder;
 using FcmSharp.Http.Constants;
+using FcmSharp.Requests;
 using FcmSharp.Serializer;
+using Newtonsoft.Json;
 
 namespace FcmSharp.Batch
 {
+    public class SubRequestBody
+    {
+        [JsonProperty("message")]
+        public Message Message { get; set; }
+
+        [JsonProperty("validate_only")]
+        public bool? ValidateOnly { get; set; }
+    }
+
     public class SubRequest
     {
         public string Url { get; set; }
 
-        public object Body { get; set; }
+        public SubRequestBody Body { get; set; }
 
         public IDictionary<string, string> Headers { get; set; }
     }
@@ -34,10 +45,15 @@ namespace FcmSharp.Batch
         {
             byte[] multipartPayload = GetMultipartPayload(requests);
 
+            var byteArrayContent = new ByteArrayContent(multipartPayload);
+            byteArrayContent.Headers.Remove("Content-Type");
+            byteArrayContent.Headers.Add("Content-Type", $"multipart/mixed; boundary={PART_BOUNDARY}");
+
+
+
             return new HttpRequestMessageBuilder("https://fcm.googleapis.com/batch", HttpMethod.Post)
-                .SetHeader(HttpHeaderNames.ContentType, MediaTypeNames.MultipartMixed)
                 .AddHeader("access_token_auth", "true")
-                .SetHttpContent(new ByteArrayContent(multipartPayload));
+                .SetHttpContent(byteArrayContent);
         }
         
         private byte[] GetMultipartPayload(SubRequest[] requests)
@@ -52,7 +68,7 @@ namespace FcmSharp.Batch
                 stringBuilder.Append(part);
             }
             
-            stringBuilder.Append($"--${PART_BOUNDARY}--\r\n");
+            stringBuilder.Append($"--{PART_BOUNDARY}--\r\n");
 
             string multiPartPayload = stringBuilder.ToString();
 

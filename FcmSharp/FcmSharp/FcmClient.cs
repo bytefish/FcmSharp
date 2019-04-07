@@ -158,12 +158,17 @@ namespace FcmSharp
             // Build Sub Requests:
             var requests = messages.Select(message => new SubRequest
                 {
-                    Body = message,
+                    Body = new SubRequestBody
+                    {
+                        Message = message,
+                        ValidateOnly = dryRun
+                    },
                     Url = $"https://fcm.googleapis.com/v1/projects/{settings.Project}/messages:send"
                 })
                 .ToArray();
 
-            var httpRequestMessageBuilder = new BatchMessageBuilder(serializer).Build(requests);
+            var httpRequestMessageBuilder = new BatchMessageBuilder(serializer)
+                .Build(requests);
                 
             try
             { 
