@@ -13,6 +13,8 @@ namespace FcmSharp
     {
         Task<FcmMessageResponse> SendAsync(FcmMessage message, CancellationToken cancellationToken = default(CancellationToken));
 
+        Task<FcmBatchResponse> SendBatchAsync(Message[] messages, bool dryRun = false, CancellationToken cancellationToken = default(CancellationToken));
+
         Task<TopicManagementResponse> SubscribeToTopic(TopicManagementRequest request, CancellationToken cancellationToken = default(CancellationToken));
 
         Task<TopicManagementResponse> UnsubscribeFromTopic(TopicManagementRequest request, CancellationToken cancellationToken = default(CancellationToken));

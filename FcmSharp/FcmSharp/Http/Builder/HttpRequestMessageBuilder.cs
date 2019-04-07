@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 
@@ -54,6 +55,20 @@ namespace FcmSharp.Http.Builder
         public HttpRequestMessageBuilder AddHeader(string name, string value)
         {
             this.headers.Add(new Header(name, value));
+
+            return this;
+        }
+
+        public HttpRequestMessageBuilder SetHeader(string name, string value)
+        {
+            var header = this.headers.FirstOrDefault(x => x.Name == name);
+
+            if (header != null)
+            {
+                this.headers.Remove(header);
+            }
+
+            AddHeader(name, value);
 
             return this;
         }

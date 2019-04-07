@@ -10,47 +10,37 @@ using FcmSharp.Serializer;
 
 namespace FcmSharp.Batch
 {
-    public class SubRequest<TPayloadType>
+    public class SubRequest
     {
         public string Url { get; set; }
 
-        public TPayloadType Body { get; set; }
+        public object Body { get; set; }
 
         public IDictionary<string, string> Headers { get; set; }
     }
 
-    public class BatchRequestClient
+    public class BatchMessageBuilder
     {
         private const string PART_BOUNDARY = "__END_OF_PART__";
 
-        private readonly HttpClient httpClient;
-        private readonly string batchUrl;
-        private readonly IDictionary<string, string> headers;
         private readonly IJsonSerializer serializer;
 
-        public BatchRequestClient(HttpClient httpClient, IJsonSerializer serializer, string batchUrl, IDictionary<string, string> headers)
+        public BatchMessageBuilder(IJsonSerializer serializer)
         {
-            this.httpClient = httpClient;
-            this.batchUrl = batchUrl;
-            this.headers = headers;
             this.serializer = serializer;
         }
 
-        public async Task SendBatchAsync<TPayloadType>(SubRequest<TPayloadType>[] requests)
+        public HttpRequestMessageBuilder Build(SubRequest[] requests)
         {
             byte[] multipartPayload = GetMultipartPayload(requests);
 
-            var request = new HttpRequestMessageBuilder(batchUrl, HttpMethod.Post)
-                .AddHeader(HttpHeaderNames.ContentType, MediaTypeNames.MultipartMixed)
-                .SetHttpContent(new ByteArrayContent(multipartPayload))
-                .Build();
-
-            var httpResponseMessage = await httpClient.SendAsync(request);
-
-            
+            return new HttpRequestMessageBuilder("https://fcm.googleapis.com/batch", HttpMethod.Post)
+                .SetHeader(HttpHeaderNames.ContentType, MediaTypeNames.MultipartMixed)
+                .AddHeader("access_token_auth", "true")
+                .SetHttpContent(new ByteArrayContent(multipartPayload));
         }
-
-        public byte[] GetMultipartPayload<TPayload>(SubRequest<TPayload>[] requests)
+        
+        private byte[] GetMultipartPayload(SubRequest[] requests)
         {
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -66,10 +56,10 @@ namespace FcmSharp.Batch
 
             string multiPartPayload = stringBuilder.ToString();
 
-            return Encoding.UTF8.GetBytes(multiPartPayload):
+            return Encoding.UTF8.GetBytes(multiPartPayload);
         }
 
-        public string CreatePart<TPayloadType>(SubRequest<TPayloadType> request, int index)
+        private string CreatePart(SubRequest request, int index)
         {
             string serializedRequest = SerializeSubRequest(request);
 
@@ -85,7 +75,7 @@ namespace FcmSharp.Batch
             return part.ToString();
         }
 
-        public string SerializeSubRequest<TPayloadType>(SubRequest<TPayloadType> request)
+        public string SerializeSubRequest(SubRequest request)
         {
             string requestBody = serializer.SerializeObject(request.Body);
 
