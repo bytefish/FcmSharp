@@ -18,5 +18,7 @@ namespace FcmSharp.Http.Client
         Task SendAsync(HttpRequestMessageBuilder builder, CancellationToken cancellationToken);
 
         Task SendAsync(HttpRequestMessageBuilder builder, HttpCompletionOption completionOption, CancellationToken cancellationToken);
+
+        Task<TResponseType[]> SendBatchAsync<TResponseType>(HttpRequestMessageBuilder builder, CancellationToken cancellationToken);
     }
 }

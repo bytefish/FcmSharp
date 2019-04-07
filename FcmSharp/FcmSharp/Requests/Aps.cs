@@ -33,6 +33,6 @@ namespace FcmSharp.Requests
         public string ThreadId { get; set; }
 
         [JsonExtensionData]
-        public Dictionary<string, object> CustomData { get; set; }
+        public IDictionary<string, object> CustomData { get; set; }
     }
 }

@@ -46,10 +46,9 @@ namespace FcmSharp.Batch
             byte[] multipartPayload = GetMultipartPayload(requests);
 
             var byteArrayContent = new ByteArrayContent(multipartPayload);
+
             byteArrayContent.Headers.Remove("Content-Type");
             byteArrayContent.Headers.Add("Content-Type", $"multipart/mixed; boundary={PART_BOUNDARY}");
-
-
 
             return new HttpRequestMessageBuilder("https://fcm.googleapis.com/batch", HttpMethod.Post)
                 .AddHeader("access_token_auth", "true")

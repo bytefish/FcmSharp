@@ -155,7 +155,12 @@ namespace FcmSharp
 
         public async Task<FcmBatchResponse> SendBatchAsync(Message[] messages, bool dryRun = false, CancellationToken cancellationToken = default(CancellationToken))
         {
-            // Build Sub Requests:
+            if (messages.Length > 1000)
+            {
+                throw new ArgumentException("Only up 1000 messages are supported by Batch operations", nameof(messages));
+            }
+
+            // Build Sub Requests, which are contained in a Batch:
             var requests = messages.Select(message => new SubRequest
                 {
                     Body = new SubRequestBody
@@ -172,9 +177,14 @@ namespace FcmSharp
                 
             try
             { 
-                return await httpClient
-                    .SendAsync<FcmBatchResponse>(httpRequestMessageBuilder, cancellationToken)
+                var responses = await httpClient
+                    .SendBatchAsync<FcmSendResponse>(httpRequestMessageBuilder, cancellationToken)
                     .ConfigureAwait(false);
+
+                return new FcmBatchResponse
+                {
+                    Responses = responses
+                };
             }
             catch (FcmHttpException exception)
             {

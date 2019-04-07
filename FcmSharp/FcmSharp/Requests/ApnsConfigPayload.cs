@@ -12,6 +12,6 @@ namespace FcmSharp.Requests
         public Aps Aps { get; set; }
 
         [JsonExtensionData]
-        public Dictionary<string, object> CustomData { get; set; }
+        public IDictionary<string, object> CustomData { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace FcmSharp.Requests
     public class ApnsConfig
     {
         [JsonProperty("headers")]
-        public Dictionary<string, string> Headers { get; set; }
+        public IDictionary<string, string> Headers { get; set; }
         
         [JsonProperty("payload")]
         public ApnsConfigPayload Payload { get; set; }

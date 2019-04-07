@@ -2,12 +2,20 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
+using System.Reflection;
+using System.Text;
+using FcmSharp.Batch;
 using FcmSharp.Exceptions;
 using FcmSharp.Http.Builder;
+using FcmSharp.Http.Constants;
+using FcmSharp.Responses;
 using FcmSharp.Serializer;
 using FcmSharp.Settings;
 using Google.Apis.Auth.OAuth2;
@@ -24,30 +32,30 @@ namespace FcmSharp.Http.Client
         private readonly ServiceAccountCredential credential;
 
         public FcmHttpClient(IFcmClientSettings settings)
-            : this(settings, JsonSerializer.Default, new HttpClientFactory(), CreateDefaultHttpClientArgs(settings))
+            : this(settings, JsonSerializer.Default, new Google.Apis.Http.HttpClientFactory(), CreateDefaultHttpClientArgs(settings))
         {
         }
 
-        public FcmHttpClient(IFcmClientSettings settings, IHttpClientFactory httpClientFactory)
+        public FcmHttpClient(IFcmClientSettings settings, Google.Apis.Http.IHttpClientFactory httpClientFactory)
             : this(settings, JsonSerializer.Default, httpClientFactory, CreateDefaultHttpClientArgs(settings))
         {
         }
 
-        public FcmHttpClient(IFcmClientSettings settings, IHttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
+        public FcmHttpClient(IFcmClientSettings settings, Google.Apis.Http.IHttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
             : this(settings, JsonSerializer.Default, httpClientFactory, httpClientArgs)
         {
         }
 
-        public FcmHttpClient(IFcmClientSettings settings, IJsonSerializer serializer, IHttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
+        public FcmHttpClient(IFcmClientSettings settings, IJsonSerializer serializer, Google.Apis.Http.IHttpClientFactory httpClientFactory, CreateHttpClientArgs httpClientArgs)
         {
             if (settings == null)
             {
-                throw new ArgumentNullException("settings");
+                throw new ArgumentNullException(nameof(settings));
             }
 
             if (serializer == null)
             {
-                throw new ArgumentNullException("serializer");
+                throw new ArgumentNullException(nameof(serializer));
             }
 
             this.settings = settings;
@@ -94,6 +102,57 @@ namespace FcmSharp.Http.Client
 
             // And finally return the Object:
             return serializer.DeserializeObject<TResponseType>(httpResponseContentAsString);
+        }
+
+        public async Task<TResponseType[]> SendBatchAsync<TResponseType>(HttpRequestMessageBuilder builder, CancellationToken cancellationToken)
+        {
+            // Add Authorization Header:
+            var accessToken = await CreateAccessTokenAsync(cancellationToken).ConfigureAwait(false);
+
+            builder.AddHeader("Authorization", $"Bearer {accessToken}");
+
+            // Build the Request Message:
+            var httpRequestMessage = builder.Build();
+
+            // Invoke actions before the Request:
+            OnBeforeRequest(httpRequestMessage);
+
+            // Invoke the Request:
+            HttpResponseMessage httpResponseMessage = await client
+                .SendAsync(httpRequestMessage, cancellationToken)
+                .ConfigureAwait(false);
+
+            // Invoke actions after the Request:
+            OnAfterResponse(httpRequestMessage, httpResponseMessage);
+
+            // Apply the Response Interceptors:
+            EvaluateResponse(httpResponseMessage);
+
+            var multipart = await httpResponseMessage.Content.ReadAsMultipartAsync(cancellationToken);
+
+            List<TResponseType> result = new List<TResponseType>();
+
+            foreach (var content in multipart.Contents)
+            {
+                string part = await content.ReadAsStringAsync();
+
+                // This is quite a hack approach, which might or might not work for all scenarios.
+                // I am splitting the multipart response into lines, which in turn is skipped until
+                // we hit a line with a single "{", which indicates we have found some JSON:
+                IEnumerable<string> jsonLines = part.Split('\n').SkipWhile(x => !string.Equals(x.Trim(), "{"));
+
+                // Then we turn the lines into a String again:
+                var jsonString = string.Join("\n", jsonLines);
+
+                // So Newtonsoft.JSON can deserialize it again:
+                var response = serializer.DeserializeObject<TResponseType>(jsonString);
+
+                // And add it to the result:
+                result.Add(response);
+            }
+            
+            // And finally return the Object:
+            return result.ToArray();
         }
 
         public Task SendAsync(HttpRequestMessageBuilder builder, CancellationToken cancellationToken)

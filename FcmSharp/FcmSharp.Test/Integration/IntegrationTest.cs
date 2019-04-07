@@ -4,7 +4,6 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System.IO;
@@ -17,6 +16,7 @@ using FcmSharp.Http.Builder;
 using FcmSharp.Http.Client;
 using FcmSharp.Settings;
 using Google.Apis.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FcmSharp.Test.Integration
 {

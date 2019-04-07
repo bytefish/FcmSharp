@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using FcmSharp.Requests;
 using FcmSharp.Settings;
@@ -12,34 +15,30 @@ namespace FcmSharp.Test.Integration
         [Test]
         public void SendBatchMessages()
         {
+            // This is a list of Tokens I want to send the Batch Message to:
+            var tokens = File.ReadAllLines(@"D:\device_tokens.txt");
+
             // Read the Credentials from a File, which is not under Version Control:
             var settings = FileBasedFcmClientSettings.CreateFromFile(@"D:\serviceAccountKey.json");
 
             // Construct the Client:
             using (var client = new FcmClient(settings))
             {
-                const string token1 = "XXX";
-                const string token2 = "XXX";
-
                 var notification = new Notification
                 {
                     Title = "Notification Title",
                     Body = "Notification Body Text"
                 };
 
-                var messages = new[]
-                {
-                    new Message
+                var messages = tokens
+                    // Create the Messages to be sent for each of the Tokens:
+                    .Select(token => new Message
                     {
-                        Token = token1,
+                        Token = token,
                         Notification = notification
-                    },
-                    new Message
-                    {
-                        Token = token2,
-                        Notification = notification
-                    },
-                };
+                    })
+                    // And turn it into an Array:
+                    .ToArray();
 
                 // Finally send the Message and wait for the Result:
                 CancellationTokenSource cts = new CancellationTokenSource();
@@ -48,17 +47,10 @@ namespace FcmSharp.Test.Integration
                 var result = client.SendBatchAsync(messages, false, cts.Token).GetAwaiter().GetResult();
 
                 // Print the Result to the Console:
-                Console.WriteLine($"Batch SuccessCount = {result.SuccessCount}, FailureCount = {result.FailureCount}");
-
-                Console.WriteLine("Batch Responses:");
-
                 foreach (var response in result.Responses)
                 {
-                    Console.WriteLine($"SendResponse MessageId = {response.MessageId}, Success = {response.Success}");
+                    Assert.IsNotNull(response.Name);
                 }
-
-                Console.WriteLine("Press Enter to exit ...");
-                Console.ReadLine();
             }
         }
 

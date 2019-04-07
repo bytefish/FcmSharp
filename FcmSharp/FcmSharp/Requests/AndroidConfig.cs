@@ -25,7 +25,7 @@ namespace FcmSharp.Requests
         public string RestrictedPackageName { get; set; }
 
         [JsonProperty("data")]
-        public Dictionary<string, string> Data { get; set; }
+        public IDictionary<string, string> Data { get; set; }
 
         [JsonProperty("notification")]
         public AndroidNotification Notification { get; set; }

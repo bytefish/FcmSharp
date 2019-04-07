@@ -9,6 +9,6 @@ namespace FcmSharp.Responses
     public class FcmMessageErrorResponse
     {
         [JsonProperty("error")]
-        public Dictionary<string, object> Error { get; set; }
+        public IDictionary<string, object> Error { get; set; }
     }
 }
