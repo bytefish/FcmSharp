@@ -13,6 +13,15 @@ It implements the Firebase Cloud Messaging HTTP v1 API:
 
 [FcmSharp] supports .NET Core as of Version 1.0.0.
 
+
+## Notes ##
+
+This library was written at a time, the official Firebase Admin SDK for .NET didn't support the Firebase Cloud Messaging API. 
+
+The Messaging Features have been added to the [Firebase Admin SDK for .NET](https://github.com/firebase/firebase-admin-dotnet) lately, so you can also use the official Firebase Admin SDK for .NET instead of this library: 
+
+* [https://github.com/firebase/firebase-admin-dotnet](https://github.com/firebase/firebase-admin-dotnet)
+
 ## Installing FcmSharp ##
 
 You can use [NuGet](https://www.nuget.org) to install [FcmSharp]. Run the following command 
